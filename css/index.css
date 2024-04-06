@@ -68,6 +68,9 @@ header {
     color: var(--m-500);
     text-decoration: none;
 }
+.light {
+    font-weight: lighter;
+}
 h3 {
     padding-block: 1em;
     color: var(--t-1);
