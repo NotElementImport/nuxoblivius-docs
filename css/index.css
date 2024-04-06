@@ -1,0 +1,75 @@
+:root {
+    --m-100: #1a1a1a;
+    --m-250: #2e2e2e;
+    --m-200: #2f3832;
+    --m-300: #2a5137;
+    --m-400: #28974d;
+    --m-500: #50b171;
+    --m-mix: #41abb9;
+    --t-1: #a5a5a5;
+    --t-2: #aec6a5;
+    --b-1: #2f3832;
+}
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--m-100);
+    font-family: "Reddit Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: normal;
+    font-style: normal;
+}
+header {
+    padding: 1em;
+    border-bottom: var(--b-1) 1px solid;
+}
+.center {
+    margin: auto;
+    width: min(100%, 960px);
+}
+.flex-horizontal {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.title {
+    color: var(--t-1);
+    font-size: 18px;
+}
+.logo {
+    -webkit-text-fill-color: transparent;
+    background: -webkit-linear-gradient(var(--m-mix), var(--m-500));
+    -webkit-background-clip: text;
+    font-size: 64px;
+    font-style: normal;
+    font-weight: bold;
+}
+.logo-sub-text {
+    color: #a5a5a5;
+    font-size: 24px;
+}
+.blur-shadow {
+    filter: drop-shadow(0px 0px 84px #2a5137);
+}
+.blur-shadow-mini {
+    filter: drop-shadow(0px 0px 42px #2a5137);
+}
+.block {
+    background: #2e2e2e3a;
+    color: var(--t-2);
+    padding: 1em;
+    border-radius: 6px;
+    border: 1px var(--m-250) solid;
+}
+.normal-text {
+    color: var(--t-1);
+}
+.normal-text a {
+    color: var(--m-500);
+    text-decoration: none;
+}
+h3 {
+    padding-block: 1em;
+    color: var(--t-1);
+    border-bottom: var(--b-1) 1px solid;
+}
