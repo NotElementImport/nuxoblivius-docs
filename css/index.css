@@ -76,3 +76,13 @@ h3 {
     color: var(--t-1);
     border-bottom: var(--b-1) 1px solid;
 }
+a {
+    text-decoration: none
+}
+a.block {
+    cursor: pointer;
+    transition: transform 0.1s ease-in;
+}
+a.block:hover {
+    transform: scale(1.02);
+}
