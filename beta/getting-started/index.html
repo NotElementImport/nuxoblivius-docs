@@ -12,6 +12,10 @@
         <title>
             Nuxoblivius Docs
         </title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/nginx.min.js"></script>
     </head>
     <body>
         <header>
@@ -28,23 +32,53 @@
         <br>
         <div class="center" style="display: flex; flex-direction: row; gap: 21px;">
             <aside style="flex: 1 1;">
-                <nav class="block" style="display: flex; flex-direction: column; gap: 21px;">
+                <nav class="block" style="display: flex; flex-direction: column; gap: 21px; position: sticky; top: 21px;">
                     <a href="#t-getting-started" class="normal-text">Getting Started</a>
                     <a href="#t-setup" class="normal-text">Setup to a project</a>
                     <a href="#t-guide" class="normal-text">Guide</a>
                 </nav>
             </aside>
             <main style="flex: 2.5 1;">
-                <div class="block" id="t-getting-started" style="overflow: hidden;">
+                <div class="block normal-text" id="t-getting-started" style="overflow: hidden;">
                     <h3 style="margin: 0; padding-top: 0;">
                         Getting Started
                     </h3>
+                    <br>
+                    Nuxoblivius (State Managment, Store) пакет для <i style="color: var(--m-500);">Vue 3</i>, сделан для удобной работы с Сервером и некоторыми мелочами проекта.<br><br>
+                    Nuxoblivius реализует работу:
+                    <ul>
+                        <li>
+                            Работу с данными (REST)
+                        </li>
+                        <li>
+                            Хранения данных на клиенте (Сервер, Клиент)
+                        </li>
+                        <li>
+                            Удобства и ООП для проекта
+                        </li>
+                    </ul>
+                    Так же содержит components для работы в во vue файлах. В виде разных плюшек.
                 </div>
                 <br>
-                <div class="block" id="t-setup" style="overflow: hidden;">
+                <div class="block normal-text" id="t-setup" style="overflow: hidden;">
                     <h3 style="margin: 0; padding-top: 0;">
                         Setup to a Project
                     </h3>
+                    <br>
+                    Установка пакета, в проект.<br><br>
+                    Nuxoblivius поддерживает <i style="color: var(--m-500);">Vue 3</i> и <i style="color: var(--m-500);">Nuxt 3</i><br><br>
+                    Качаем пакет:<br>
+                    <pre><code class="language-nginx theme-atom-one-dark">npm i nuxoblivius@0.4.2-b</code></pre>
+                    В <i style="color: var(--m-500);">Nuxt 3</i> надо указать дополнительный файл настроек в plugins.<br>
+                    <pre><code class="language-typescript theme-atom-one-dark">import { setCustomCookie, setCustomRouter, setCustomFetch, setHeaders } from "nuxoblivius"
+
+export default defineNuxtPlugin((nuxtApp) => {
+    setCustomCookie(useCookie) // Регистрируем Cookie на сервере
+    setCustomRouter(useRouter) // Регистрируем Router проекта на сервере
+    setCustomFetch(useLazyFetch) // Регистрируем Кастомный Fetch проекта на сервере
+    setHeaders(useRequestHeaders()) // Передаём Хэдеры
+})</code></pre>
+                    После процедур, можно работать
                 </div>
                 <br>
                 <div class="block" id="t-guide" style="overflow: hidden;">
@@ -54,5 +88,6 @@
                 </div>
             </main>
         </div>
+        <script>hljs.highlightAll();</script>
     </body>
 </html>
