@@ -86,3 +86,6 @@ a.block {
 a.block:hover {
     transform: scale(1.02);
 }
+pre code{
+    border-radius: 6px !important;
+}
