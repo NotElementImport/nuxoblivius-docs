@@ -39,7 +39,7 @@
                     <a href="#t-guide" class="normal-text">First Store</a>
                 </nav>
             </aside>
-            <main style="flex: 2.5 1; line-height: 1.4;">
+            <main style="flex: 2.5 1; line-height: 1.5;">
                 <div class="normal-text" id="t-getting-started" style="overflow: hidden;">
                     <h2 style="margin: 0; padding-top: 0;">
                         Getting Started
@@ -70,7 +70,7 @@
                     Установка пакета, в проект.<br><br>
                     Nuxoblivius поддерживает <i style="color: var(--m-500);">Vue 3</i> и <i style="color: var(--m-500);">Nuxt 3</i><br>
                     Качаем пакет:<br>
-                    <pre><code class="language-nginx theme-atom-one-dark">npm i nuxoblivius@0.4.2-b</code></pre>
+                    <pre><code class="language-nginx theme-atom-one-dark">npm i nuxoblivius@0.4.2-b #stable</code></pre>
                     В <i style="color: var(--m-500);">Nuxt 3</i> надо указать дополнительный файл настроек в plugins.<br>
                     <pre><code class="language-typescript theme-atom-one-dark">import { setCustomCookie, setCustomRouter, setCustomFetch, setHeaders } from "nuxoblivius"
 
@@ -99,7 +99,7 @@ export default class MyStore extends StateManager<MyStore> {
         .one()
 
     constructor() {
-        super("doctors") // Имя стора
+        super("My Store") // Имя стора
         this.manage() // Запуск создание стора
     }
 }</code></pre>
@@ -111,9 +111,9 @@ const myStore = new MyStore()
 &lt;/script&gt;</code></pre>
                     В  шаблоне
 <pre><code class="language-typescript theme-atom-one-dark">&lt;template&gt;
-    {{ myStore.testStore }}
+    {{ myStore.testStore }} // 'test'
     // Или
-    {{ MyStore.get('testStore') }}
+    {{ MyStore.get('testStore') }} // 'test'
 &lt;/template&gt;</code></pre>
                     <br>
                     Больше информации в:<br><br>
