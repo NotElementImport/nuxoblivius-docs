@@ -10,22 +10,19 @@ hero:
   actions:
     - theme: brand
       text: "Docs v 1.0"
-      link: /markdown-examples
+      link: /release/
     - theme: alt
       text: "Docs v 0.4.x"
-      link: /markdown-examples
+      link: /beta/
     - theme: alt
       text: API Examples
-      link: /api-examples
+      link: /examples/
 
 features:
-  - title: Feature A
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-
-    
+  - title: Ease Query To API
+    details: "Create Records for fetching data from API easyly with many functions. With SSR Support"
+  - title: Reactive without ref()
+    details: Use OOP for controll in project, and dont worry about less reactivity
+  - title: Keep data and use again
+    details: Easy work for storing data in Client
 ---
-
