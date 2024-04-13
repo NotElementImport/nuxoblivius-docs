@@ -5,13 +5,14 @@ export default defineConfig({
   title: "Nuxoblivius",
   description: "A Power Store for Vue and Nuxt",
   themeConfig: {
+    logoLink: '/',
     logo: '/NX-Logo-Temp.png',
     carbonAds: undefined,
 
     // https://vitepress.dev/reference/default-theme-config
     nav: [
-      { text: '1.0.0', link: '/release/' },
-      { text: '0.4.X', link: '/beta/' },
+      { text: '1.0.0', link: '/release/overview' },
+      { text: '0.4.X', link: '/beta/overview' },
       { text: 'Examples', link: '/markdown-examples/' }
     ],
 
@@ -21,10 +22,16 @@ export default defineConfig({
         items: [
           { text: 'Overview', link: '/release/overview' },
           { text: 'Setup', link: '/release/setup' },
-          { text: 'Store', link: '/api-examples' },
-          { text: 'Sub Stores', link: '/api-examples' },
-          { text: 'Records', link: '/api-examples' },
-          { text: 'Storage', link: '/api-examples' }
+          { text: 'Store', link: '/release/store', items: [
+            { text: 'Prop', link: '/release/store/prop',},
+            { text: 'Prop (Encapsulation)', link: '/release/store/prop-encapsulation',},
+            { text: 'Records', link: '/release/store/records',},
+            { text: 'Storage', link: '/release/store/storage',},
+            { text: 'Dynamic Params', link: '/release/store/dynamic-params',},
+          ] },
+          { text: 'Sub Stores', link: '/release/sub-store' },
+          { text: 'Records', link: '/release/records' },
+          { text: 'Storage', link: '/release/storage' }
         ]
       },
       {
