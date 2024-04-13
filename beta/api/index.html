@@ -87,17 +87,56 @@ export default class MyStore extends StateManager<MyStore> {
                     <br><br>Пример декларации:
                     <pre><code class="language-typescript theme-atom-one-dark">import StateManager, { state } from "nuxoblivius"
 
-export default class MyStore extends StateManager<MyStore> {
+export default class Player extends StateManager<MyStore> {
     // =======================================================
     // Здесь мы создаём объект стора
-    // В данном примере обычное текстовое реактивное поле
+    // В данном примере что у игрока в руке
     // И помечаем что поле не массив
-    public testStore = state&lt;string&gt;('test')
+    public currentItem = state&lt;string&gt;('none')
         .one()
+    // Здесь мы создаём объект стора
+    // В данном примере инвентарь игрока
+    // И помечаем что поле массив
+    public inventory = state&lt;string&gt;(['stick'])
+        .many()
     // =======================================================
 
     constructor() {
-        super("My Store")
+        super("Player")
+        this.manage() // Запуск создание стора
+    }
+}</code></pre>
+                </div>
+                <br>
+                <hr noshade style="margin-block: 21px; border-color: var(--b-1);">
+                <div class="normal-text" id="t-state-manager-state" style="overflow: hidden;">
+                    <h2 style="margin: 0; padding-top: 0;">
+                        StateManager / Storage
+                    </h2>
+                    <br>
+                    Для создания простого реактивного поля в <span class="tag">state</span>.<br><br>
+                    Мы используем цепочку <span class="tag">state().one()</span> или  <span class="tag">state().many()</span>.<br>
+                    Методы one и many отвечают за точного ответа являеться ли объект массивом. Во всех структурах one и many завершают билдер и возвращают ответ в виде готового объекта.
+
+                    <br><br>Пример декларации:
+                    <pre><code class="language-typescript theme-atom-one-dark">import StateManager, { state } from "nuxoblivius"
+
+export default class Player extends StateManager<MyStore> {
+    // =======================================================
+    // Здесь мы создаём объект стора
+    // В данном примере что у игрока в руке
+    // И помечаем что поле не массив
+    public currentItem = state&lt;string&gt;('none')
+        .one()
+    // Здесь мы создаём объект стора
+    // В данном примере инвентарь игрока
+    // И помечаем что поле массив
+    public inventory = state&lt;string&gt;(['stick'])
+        .many()
+    // =======================================================
+
+    constructor() {
+        super("Player")
         this.manage() // Запуск создание стора
     }
 }</code></pre>
