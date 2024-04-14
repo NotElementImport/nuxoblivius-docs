@@ -7,8 +7,8 @@ export default defineConfig({
   title: "Nuxoblivius",
   description: "A Power Store for Vue and Nuxt",
   themeConfig: {
-    logoLink: '/',
-    logo: '/NX-Logo-Temp.png',
+    logoLink: '/nuxoblivius-docs/',
+    logo: '/nuxoblivius-docs/NX-Logo-Temp.png',
     carbonAds: undefined,
 
     // https://vitepress.dev/reference/default-theme-config
