@@ -2,6 +2,8 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+  base: '/nuxoblivius-docs/',
+  ignoreDeadLinks: true,
   title: "Nuxoblivius",
   description: "A Power Store for Vue and Nuxt",
   themeConfig: {
@@ -18,7 +20,7 @@ export default defineConfig({
 
     sidebar: [
       {
-        text: 'Release',
+        text: '1.0.0',
         items: [
           { text: 'Overview', link: '/release/overview' },
           { text: 'Setup', link: '/release/setup' },
@@ -31,11 +33,10 @@ export default defineConfig({
           ] },
           { text: 'Sub Stores', link: '/release/sub-store' },
           { text: 'Records', link: '/release/records' },
-          { text: 'Storage', link: '/release/storage' }
         ]
       },
       {
-        text: 'Beta',
+        text: '0.4.X',
         items: [
           { text: 'Overview', link: '/beta/overview', rel: 'check' },
           { text: 'Setup', link: '/beta/setup' },
