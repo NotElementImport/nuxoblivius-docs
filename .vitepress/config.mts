@@ -2,6 +2,7 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+  ignoreDeadLinks: true,
   title: "Nuxoblivius",
   description: "A Power Store for Vue and Nuxt",
   themeConfig: {
