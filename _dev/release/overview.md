@@ -2,7 +2,7 @@
 
 Nuxoblivius is Power Store for Vue 3 and Nuxt 3. Using OOP and Sub Store system 
 
-Example (Easy Store):
+Example:
 
 ```ts
 import {defineStore} from 'nuxoblivius'

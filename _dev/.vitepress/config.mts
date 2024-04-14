@@ -18,7 +18,7 @@ export default defineConfig({
 
     sidebar: [
       {
-        text: 'Release',
+        text: '1.0.0',
         items: [
           { text: 'Overview', link: '/release/overview' },
           { text: 'Setup', link: '/release/setup' },
@@ -31,11 +31,10 @@ export default defineConfig({
           ] },
           { text: 'Sub Stores', link: '/release/sub-store' },
           { text: 'Records', link: '/release/records' },
-          { text: 'Storage', link: '/release/storage' }
         ]
       },
       {
-        text: 'Beta',
+        text: '0.4.X',
         items: [
           { text: 'Overview', link: '/markdown-examples', rel: 'check' },
           { text: 'Setup', link: '/markdown-examples' },

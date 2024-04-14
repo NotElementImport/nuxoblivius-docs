@@ -1,0 +1,48 @@
+# Store - Dynamic Params
+
+Dynamic Params - in [Record](/release/records) methods, we can use Dynamic Params
+
+If our logic not reactive, better use Dynamic Params. `() => // logic`
+
+Some example:
+```ts
+import {defineStore, Record} from 'nuxoblivius'
+
+class Example {
+    private _notReactiveField: string = 'important info'
+
+    public fetchFromServer = Record.new<ISomeData>('/api/my/path')
+        .query({
+            // BAD
+            veryImportant: this.ref._notReactiveField, 
+            // GOOD
+            veryImportant: () => this._notReactiveField 
+        })
+        .query({
+            // BAD
+            someParam: globalThis['my-param'],
+            // GOOD
+            someParam: () => 'my-param' in globalThis
+                                ? globalThis['my-param']
+                                : null,
+            // BEST
+            someParam: () => this.getMyParam()
+        })
+        // Another Method
+        .query({
+            // Worked too
+            get someParam() {
+                return this.getMyParam()
+            },
+            test: 'test'
+        })
+
+    private getMyParam() {
+        return 'my-param' in globalThis
+            ? globalThis['my-param']
+            : null
+    }
+}
+
+export default defineStore<Example>(Example)
+```
