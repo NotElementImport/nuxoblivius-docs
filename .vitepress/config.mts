@@ -38,18 +38,23 @@ export default defineConfig({
       {
         text: '0.4.X',
         items: [
-          { text: 'Overview', link: '/markdown-examples', rel: 'check' },
-          { text: 'Setup', link: '/markdown-examples' },
-          { text: 'Store', link: '/api-examples' }
+          { text: 'Overview', link: '/beta/overview', rel: 'check' },
+          { text: 'Setup', link: '/beta/setup' },
+          { text: 'Store', link: '/beta/store/defineStore', items: [
+            { text: 'Methods', link: '/beta/store/methods',},
+            { text: 'Filter', link: '/beta/store/filter',},
+          ] },
+          { text: 'Usage', link: '/beta/usage' },
+          { text: 'Examples', link: '/beta/examples' },
         ]
       },
-      {
-        text: 'Examples',
-        items: [
-          { text: 'Release', link: '/markdown-examples' },
-          { text: 'Beta', link: '/api-examples' }
-        ]
-      }
+      // {
+      //   text: 'Examples',
+      //   items: [
+      //     { text: 'Release', link: '/markdown-examples' },
+      //     { text: 'Beta', link: '/api-examples' }
+      //   ]
+      // }
     ],
 
     // socialLinks: [
