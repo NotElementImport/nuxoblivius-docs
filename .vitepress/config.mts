@@ -38,7 +38,7 @@ export default defineConfig({
       {
         text: '0.4.X',
         items: [
-          { text: 'Overview', link: '/beta/overview', rel: 'check' },
+          // { text: 'Overview', link: '/beta/overview', rel: 'check' },
           { text: 'Setup', link: '/beta/setup' },
           { text: 'Store', link: '/beta/store/defineStore', items: [
             { text: 'Methods', link: '/beta/store/methods',},

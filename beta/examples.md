@@ -280,3 +280,27 @@ export default class Feedback extends SM<Feedback> {
     }
 }
 ```
+
+## 6
+```ts
+import SM, { state } from "nuxoblivius";
+import Language from "./language";
+import type { IArticle } from '@/types/interfaces'
+
+export default class Articles extends SM<Articles> {
+    public items = state<IArticle>( [])
+        .api("/api/pages")
+        .pagination(5, true)
+        .many()
+
+    public item = state<IArticle>({})
+        .api("/api/pages")
+        .join(this.items, "slug")
+        .one()
+
+    constructor() {
+        super("articles")
+        this.manage()
+    }
+}
+```
