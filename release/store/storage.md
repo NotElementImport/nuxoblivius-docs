@@ -1,10 +1,5 @@
 # Store - Storage
 
-::: warning
-Still in development
-:::
-
-
 [Storage](/release/storage) is independent object, who had can keep data in page, and work again later. Work like as `Prop`
 
 
