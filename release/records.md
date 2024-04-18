@@ -2,10 +2,6 @@
 
 `Records` is the object that is requested by the api
 
-::: warning
-Still
-:::
-
 ## Define
 For define `Records` need use this struct 
 
@@ -189,10 +185,58 @@ They also supported [Dynamic Params](/release/store/dynamic-params.html)
 
 ## Method GET
 
+To call Query, using `get()`, `post()`, `put()`, `delete()`
+
+`get()` - Working as `method: 'get'` in options
+
+Had 1 argument `id`, who work as [path param](/release/records.html#path-params)
+
+```ts
+// Example
+record.get() // Without argument
+record.get(1) // With argument
+// or
+record.get('1') // With argument
+
+// Example await
+// Not reactive
+const result = await record.get()
+```
+
 ## Method POST
+
+`post()` - Working as `method: 'post'` in options
+
+Had 1 argument `id`, who work as [path param](/release/records.html#path-params)
+
+```ts
+// Example
+record.get() // Without argument
+record.get(1) // With argument
+// or
+record.get('1') // With argument
+
+// Example await
+// Not reactive
+const result = await record.get()
+```
 
 ## Method PUT
 
 ## Method DELETE
 
 ## Reactive Response
+
+Records have a reactive `response` property. 
+
+```vue
+<script setup lang='ts'>
+...
+myStore.record.get()
+...
+</script>
+<template>
+    <!-- Reactive response -->
+    {{ myStore.record.response }}
+</template>
+```

@@ -15,18 +15,20 @@ And write rule to `tsconfig.json` (for work encapsulation, and read only)
 }
 ```
 
-In Nuxt 3, write `NxNuxt` in `app.vue`
-```vue
-<script setup>
-import NxNuxt from 'nuxoblivius/nxnuxt/index.vue'
-</script>
-<template>
-    <NuxtLayout>
-        <NxNuxt api-root="https://your-api.com/api" />
-        <!-- Or -->
-        <NxNuxt :api-root="useRuntimeConfig().public.api" />
+In Nuxt 3. Add module and params
 
-        <NuxtPage />
-    </NuxtLayout>
-</template>
+```ts
+export default defineNuxtConfig({
+    ...
+    modules: [
+        'nuxoblivius/nuxt',
+    ],
+
+    nuxoblivius: {
+        // SSR need
+        // Path to API (For Records)
+        api: "http://my-api.com" // Without `/` at end
+    },
+    ...
+})
 ```
