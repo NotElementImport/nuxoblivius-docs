@@ -79,6 +79,8 @@ export default defineStore<UserInfo>(UserInfo)
 
 We can put a Sub Store in the Query, read more [here](/release/sub-store.html#sub-stores-as-query)
 
+Also can read a [Dynamic Params in  Query](/release/store/dynamic-params.html)
+
 ## Path Params
 
 `Records` support Path Params in request path, example param in path: `/api/user/get/{id}`
@@ -207,23 +209,62 @@ const result = await record.get()
 
 `post()` - Working as `method: 'post'` in options
 
-Had 1 argument `id`, who work as [path param](/release/records.html#path-params)
+Had 1 argument `body`, who work as [path param](/release/records.html#body)
 
 ```ts
 // Example
-record.get() // Without argument
-record.get(1) // With argument
+record.post() // Without argument
+
+// JSON
+record.post({'my': 'json'})
 // or
-record.get('1') // With argument
+// FormData
+const formData = new FormData()
+formData.append('my', 'formData')
+record.post(formData)
 
 // Example await
 // Not reactive
-const result = await record.get()
+const result = await record.post()
 ```
 
 ## Method PUT
 
+
+`put()` - Working as `method: 'put'` in options
+
+Had 1 argument `body`, who work as [path param](/release/records.html#body)
+
+```ts
+// Example
+record.put() // Without argument
+
+// JSON
+record.put({'my': 'json'})
+// or
+// FormData
+const formData = new FormData()
+formData.append('my', 'formData')
+record.put(formData)
+
+// Example await
+// Not reactive
+const result = await record.put()
+```
+
 ## Method DELETE
+
+```ts
+// Example
+record.delete() // Without argument
+record.delete(1) // With argument
+// or
+record.delete('1') // With argument
+
+// Example await
+// Not reactive
+const result = await record.delete()
+```
 
 ## Reactive Response
 
@@ -236,7 +277,7 @@ myStore.record.get()
 ...
 </script>
 <template>
-    <!-- Reactive response -->
+    <!-- Reactive response, SSR friendly -->
     {{ myStore.record.response }}
 </template>
 ```
