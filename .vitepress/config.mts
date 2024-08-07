@@ -6,6 +6,17 @@ export default defineConfig({
   ignoreDeadLinks: true,
   title: "Nuxoblivius",
   description: "A Power Store for Vue and Nuxt",
+  locales: {
+    root: {
+     label: 'English',
+     lang: 'en'
+    },
+    ru: {
+      label: 'Russian',
+      lang: 'ru',
+      link: '/'
+    }
+  },
   themeConfig: {
     logoLink: '/nuxoblivius-docs/',
     logo: '/nuxoblivius-docs/NX-Logo-Temp.png',
