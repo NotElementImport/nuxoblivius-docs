@@ -6,21 +6,33 @@ export default defineConfig({
   ignoreDeadLinks: true,
   title: "Nuxoblivius",
   description: "A Power Store for Vue and Nuxt",
+
+  locales: {
+    root: {
+      label: 'English',
+      lang: 'en',
+      link: ''
+    },
+    ru: {
+      label: 'Русский',
+      lang: 'ru',
+      link: '/ru',
+    }
+  },
+
   themeConfig: {
     logoLink: '/nuxoblivius-docs/',
     logo: '/nuxoblivius-docs/NX-Logo-Temp.png',
     carbonAds: undefined,
 
-    // https://vitepress.dev/reference/default-theme-config
     nav: [
-      { text: '1.0.0', link: '/release/overview' },
+      { text: '1.1.0', link: '/release/overview' },
       { text: '0.4.X', link: '/beta/overview' },
-      { text: 'Examples', link: '/markdown-examples/' }
     ],
 
     sidebar: [
       {
-        text: '1.0.0',
+        text: '1.1.0',
         items: [
           { text: 'Overview', link: '/release/overview' },
           { text: 'Setup', link: '/release/setup' },
@@ -33,12 +45,13 @@ export default defineConfig({
           ] },
           { text: 'Sub Stores', link: '/release/sub-store' },
           { text: 'Records', link: '/release/records' },
+          { text: 'Records Extends', link: '/release/records-extends' },
+          { text: 'Records Templates', link: '/release/template' },
         ]
       },
       {
         text: '0.4.X',
         items: [
-          // { text: 'Overview', link: '/beta/overview', rel: 'check' },
           { text: 'Setup', link: '/beta/setup' },
           { text: 'Store', link: '/beta/store/defineStore', items: [
             { text: 'Methods', link: '/beta/store/methods',},
