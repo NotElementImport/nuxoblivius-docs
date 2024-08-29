@@ -77,6 +77,12 @@ class UserInfo {
 export default defineStore<UserInfo>(UserInfo)
 ```
 
+You can also clear out all the queries
+
+```ts
+myRecordObject.clearDynamicQuery()
+```
+
 We can put a Sub Store in the Query, read more [here](/release/sub-store.html#sub-stores-as-query)
 
 Also can read a [Dynamic Params in  Query](/release/store/dynamic-params.html)
@@ -280,4 +286,41 @@ myStore.record.get()
     <!-- Reactive response, SSR friendly -->
     {{ myStore.record.response }}
 </template>
+```
+
+## Response Headers
+
+After the query, you can access the headers
+
+```ts
+myStore.record.headers.get('Content-Type')
+```
+
+## Errors
+
+It's handy to see errors and identify
+
+```ts
+myStore.record.get()
+
+if(myStore.record.error)
+    console.log('Something wrong', myStore.record.errorText)
+```
+
+## Is Fetching
+
+Indicates whether a request to the server is in progress
+
+```ts
+console.log(
+    myStore.record.loading
+)
+```
+
+## Blob Type
+
+You can put the type of the received data blob
+
+```ts
+record.isBlob(true)
 ```
