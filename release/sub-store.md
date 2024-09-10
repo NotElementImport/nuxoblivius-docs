@@ -71,7 +71,7 @@ If need track changes in Sub Store and pushing some Query again, use this struct
 ```ts
 // UserInfo.ts
 
-import {subStore, defineStore} from 'nuxoblivius'
+import {subStore, defineStore, later} from 'nuxoblivius'
 import TNameStore from '@/stack/TNameStore'
 
 class UserInfo {

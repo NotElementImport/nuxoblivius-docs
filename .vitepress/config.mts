@@ -40,7 +40,7 @@ export default defineConfig({
             { text: 'Prop', link: '/release/store/prop',},
             { text: 'Prop (Encapsulation)', link: '/release/store/prop-encapsulation',},
             { text: 'Records', link: '/release/store/records',},
-            { text: 'Storage', link: '/release/store/storage',},
+            // { text: 'Storage', link: '/release/store/storage',},
             { text: 'Dynamic Params', link: '/release/store/dynamic-params',},
           ] },
           { text: 'Sub Stores', link: '/release/sub-store' },

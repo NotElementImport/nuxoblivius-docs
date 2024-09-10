@@ -2,8 +2,8 @@
 
 `Records` is the object that is requested by the api
 
-## Define
-For define `Records` need use this struct 
+## Определение
+`Record` создаётся функцией `new('path-to-api')`
 
 ```ts{6}
 // UserInfo.ts
@@ -17,9 +17,99 @@ class UserInfo {
 export default defineStore<UserInfo>(UserInfo)
 ```
 
-## Query
+## GET
 
-For working with API, sometimes need set Query params use `query()`:
+Для осуществления самих запросов к API `Record` предлагает функции `get()`, `post()`, `put()`, `delete()`.
+Все 4 функции возвращают Promise со значением с API. Отметим, что данное возвращаемое значение не будет реактивным. Реактивное значение доступно из [ref](/release/store/prop.html#ref), либо из свойства [response](/release/records.html#response).
+
+`get()` - осуществляет get-запрос. Может принимать аргумент (id либо slug), который может работать как [path param](/release/records.html#path-params).
+
+Примеры:
+```ts
+record.get() // без аргумента
+record.get(1) // с аргументом
+// или
+record.get('1') // с аргументом
+
+// Использование:
+const result = await record.get()
+```
+
+## POST
+
+`post()` - осуществляет post-запрос. Может принимать аргумент body в виде объекта (для JSON) либо FormData, который также может работать как [path param](/release/records.html#path-params).
+
+Примеры:
+```ts
+record.post() // без аргумента
+
+// JSON:
+record.post({'my': 'json'})
+
+// или FormData:
+const formData = new FormData()
+formData.append('my', 'formData')
+record.post(formData)
+
+// Использование:
+const result = await record.post()
+```
+
+## PUT
+
+`put()` - осуществляет put-запрос. Абсолютно аналогично методу [post](/release/records.html#post) может принимать объект для JSON, либо FormDat-у, и работает как [path param](/release/records.html#path-params).
+
+Примеры:
+```ts
+record.put() // без аргумента
+
+// JSON:
+record.put({'my': 'json'})
+
+// или FormData:
+const formData = new FormData()
+formData.append('my', 'formData')
+record.put(formData)
+
+// Использование:
+const result = await record.put()
+```
+
+## DELETE
+
+`delete()` - осуществляет delete-запрос. Аналогично методу [get](/release/records.html#get) может принимать id либо slug, который будет восприниматься как [path param](/release/records.html#path-params).
+
+Примеры:
+```ts
+record.delete() // без аргумента
+record.delete(1) // с аргументом
+// или:
+record.delete('1') // с аргументом
+
+// Использование:
+const result = await record.delete()
+```
+
+## Response
+
+`Response` - реактивное свойство, содержащее непосредственно значение свойства Record-а на данный момент. 
+
+Использование:
+```vue
+<script setup lang='ts'>
+...
+myStore.record.get()
+...
+</script>
+<template>
+    <!-- Реактивное свойство, SSR-friendly: -->
+    {{ myStore.record.response }}
+</template>
+```
+
+## Query-параметры к API
+
+Можно приложить к запросу объект с query-параметрами в аргументе к функции `query()`:
 
 ```ts{7}
 // UserInfo.ts
@@ -39,25 +129,7 @@ class UserInfo {
 export default defineStore<UserInfo>(UserInfo)
 ```
 
-In query we can do from none reactive items to dynamic items example get info from `globalThis`, use `() =>`
-
-```ts{9}
-// UserInfo.ts
-
-import {defineStore, Record} from 'nuxoblivius'
-
-class UserInfo {
-    public getUserInfo = Record.new<IUserInfo>('/api/user/info')
-        // GOOD but not BEST practice
-        .query({
-            'my-param': () => 'param' in globalThis ? globalThis.param : null
-        })
-}
-
-export default defineStore<UserInfo>(UserInfo)
-```
-
-And in query we can put reactive items like
+Query-параметры могут быть динамическими и реактивными:
 
 ```ts{11}
 // UserInfo.ts
@@ -69,23 +141,45 @@ class UserInfo {
 
     public getUserInfo = Record.new<IUserInfo>('/api/user/info')
         .query({
-            // Ref to create Reference to this variable
-            'my-param': this.ref.myValue
+            'my-param': this.ref.myValue // обращаемся через ref к реактивному свойству Stor-a
+            // при каждом изменении значения myValue запрос будет осуществляться заново.
         })
 }
 
 export default defineStore<UserInfo>(UserInfo)
 ```
 
-We can put a Sub Store in the Query, read more [here](/release/sub-store.html#sub-stores-as-query)
+, также и нереактивными:
 
-Also can read a [Dynamic Params in  Query](/release/store/dynamic-params.html)
+```ts{9}
+// UserInfo.ts
 
-## Path Params
+import {defineStore, Record} from 'nuxoblivius'
 
-`Records` support Path Params in request path, example param in path: `/api/user/get/{id}`
+let myParam = 0
 
-Example in Store:
+Record.new<IUserInfo>('/api/user/info')
+    .query({
+        'my-param': () => myParam // передали свойство не через ref
+        // при изменениях свойства запрос не будет осуществляться заново, но при ручном повторном вызове будет передано обновлённое значение
+    })
+```
+
+Есть функция для очистки query-параметров `Record`-а:
+
+```ts
+myRecordObject.clearDynamicQuery()
+```
+
+Можно передать все пары "ключ-значение" из Sub Stor-а в качестве query-параметров: [Query-параметры из Sub Store](/release/sub-store.html#sub-stores-as-query)
+
+Also can read a [Dynamic Params in Query](/release/store/dynamic-params.html)
+
+## Path-параметры
+
+`Record` поддерживает path-параметры вида `/api/user/get/{id}`
+
+Пример:
 ```ts{9}
 // UserInfo.ts
 
@@ -96,23 +190,21 @@ class User {
 
     public getUser = Record.new<IUser>('/api/user/get/{id}')
         .pathParam('id', this.ref.idUser)
-
-    // Result: /api/user/get/0
-    // Is idUser equals null
-    // Then
-    // Result: /api/user/get/
 }
 
 export default defineStore<User>(User)
 ```
+, после чего при использовании свойства можно будет передать в аргументе id (все примеры использования - позже).
+
+Если был передан null, то параметр не дописывается.
 
 They also supported [Dynamic Params](/release/store/dynamic-params.html)
 
 ## Headers
 
-`Records` support customize Headers:
+`Record` позволяет прописывать к запросам заголовки:
 
-Example:
+Пример:
 ```ts{7}
 // UserInfo.ts
 
@@ -128,11 +220,10 @@ export default defineStore<User>(User)
 
 They also supported [Dynamic Params](/release/store/dynamic-params.html)
 
-## Authorization
+## Авторизация
 
-`Records` support authorization in requests:
+`Record` позволяет добавлять заголовок авторизации:
 
-Example:
 ```ts{7}
 // UserInfo.ts
 
@@ -146,7 +237,7 @@ class User {
 export default defineStore<User>(User)
 ```
 
-In `Records` had helpful methods for work with Authorization:
+Либо - для упрощенной записи - прописывать данные авторизации через функции `Bearer` либо `Basic`:
 
 ```ts
 // UserInfo.ts
@@ -156,7 +247,7 @@ import {defineStore, Record} from 'nuxoblivius'
 class User {
     public getUser = Record.new<IUser>('/api/user/get/{id}')
         .auth(Record.Bearer('as|asd%120_xcas1oa7x6'))
-        // or
+        // или:
         .auth(Record.Basic('login', 'password'))
 }
 
@@ -165,9 +256,9 @@ export default defineStore<User>(User)
 
 They also supported [Dynamic Params](/release/store/dynamic-params.html)
 
-## Body
+## Body Request
 
-To work with body of request, use `body()`
+Можно прописать тело запроса в виде объекта (который сконвертируется в JSON) либо FormData в аргументе функции `body()`:
 
 ```ts{8}
 // UserInfo.ts
@@ -185,99 +276,50 @@ export default defineStore<User>(User)
 
 They also supported [Dynamic Params](/release/store/dynamic-params.html)
 
-## Method GET
+## Заголовки ответа
 
-To call Query, using `get()`, `post()`, `put()`, `delete()`
-
-`get()` - Working as `method: 'get'` in options
-
-Had 1 argument `id`, who work as [path param](/release/records.html#path-params)
+Можно иметь доступ к заголовкам ответа:
 
 ```ts
-// Example
-record.get() // Without argument
-record.get(1) // With argument
-// or
-record.get('1') // With argument
-
-// Example await
-// Not reactive
-const result = await record.get()
+myStore.record.headers.get('Content-Type')
 ```
 
-## Method POST
+## Ошибки
 
-`post()` - Working as `method: 'post'` in options
+Доступны свойства `error` и `errorText`, содержащие информацию об ошибках с API при их наличии:
 
-Had 1 argument `body`, who work as [path param](/release/records.html#body)
-
+Использование:
 ```ts
-// Example
-record.post() // Without argument
-
-// JSON
-record.post({'my': 'json'})
-// or
-// FormData
-const formData = new FormData()
-formData.append('my', 'formData')
-record.post(formData)
-
-// Example await
-// Not reactive
-const result = await record.post()
-```
-
-## Method PUT
-
-
-`put()` - Working as `method: 'put'` in options
-
-Had 1 argument `body`, who work as [path param](/release/records.html#body)
-
-```ts
-// Example
-record.put() // Without argument
-
-// JSON
-record.put({'my': 'json'})
-// or
-// FormData
-const formData = new FormData()
-formData.append('my', 'formData')
-record.put(formData)
-
-// Example await
-// Not reactive
-const result = await record.put()
-```
-
-## Method DELETE
-
-```ts
-// Example
-record.delete() // Without argument
-record.delete(1) // With argument
-// or
-record.delete('1') // With argument
-
-// Example await
-// Not reactive
-const result = await record.delete()
-```
-
-## Reactive Response
-
-Records have a reactive `response` property. 
-
-```vue
-<script setup lang='ts'>
-...
 myStore.record.get()
-...
-</script>
-<template>
-    <!-- Reactive response, SSR friendly -->
-    {{ myStore.record.response }}
-</template>
+
+if(myStore.record.error) // true или false
+    console.log('Что-то пошло не так: ', myStore.record.errorText) // текст ошибки
+```
+
+## isLoading
+
+Доступно реактивное булевое свойство, показывающее, идёт ли загрузка с API в данный момент:
+
+```ts
+console.log(myStore.record.loading)
+```
+
+## Blob
+
+Доступна функция `isBlob()` для работы с Blob-ами, получаемыми с API:
+
+Пример использования:
+```ts
+// определяем record:
+const record = Record.new<Blob>('url-to-get-blob')
+    .isBlob(true)
+    .defineProtocol('total', 0)
+    .onFailure(Auth.failureHandle())
+
+// используем его и получаем данные:
+const result = await record
+    .query(queryOfRequest)
+    .get()
+
+console.log(result); // на выходе - Blob
 ```
