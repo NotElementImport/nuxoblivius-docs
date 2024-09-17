@@ -1,13 +1,12 @@
 # Records Templates
 
-## Overview
+## Основы
 
-To speed up development, you can use templates that will allow you to break down a request into parts or sub-adjust it
+Для избавления от рутинных действий при работе с API предусмотрены `template`-ы, задача которых - автоматическое переформатирование приходящих с API данных.
 
-Templates using where need procces raw data from server like:
+## Использование
 
-If we need to decompress data from data, and set the value to max pages.\
-Example JSON:
+Пример исходных данных:
 ```json
 {
     "data": [
@@ -18,15 +17,16 @@ Example JSON:
         }
     ],
     "meta": {
-        "count_pages": 10,
-        ...
+        "total_count": 56,
+        "current_page": 2,
+        "per_page": 3
     }
 }
 ```
-You can make it easier while working.\
-Specify which is data, and which is information about the number of pages
 
-## Basic example
+Единственная полезная часть ответа - содержимое data (к meta-данным также можно иметь доступ, об этом позже).
+
+Можно написать template функцией `RegisterTemplate`:
 
 ```ts
 import {RegisterTemplate} from 'nuxoblivius'
@@ -34,30 +34,17 @@ import {RegisterTemplate} from 'nuxoblivius'
 RegisterTemplate('my-template', (raw: object) => {
     if(raw.data) 
         return {
-            // Unpack data
             data: raw.data,
-            // Set count of pages
-            pageCount: raw.meta?.count_pages ?? 1
+            pageCount: raw.meta?.total_count / raw.meta?.per_page ?? 1 // определяем количество страничек, чтобы знать, на каком моменте остановить пагинацию
         }
-    // Else returns raw
+    else return raw
 })
 ```
 
-We get that when we make a query, we will work with `data` at once
+, а затем использовать его при определении [Record](/release/records.html)-а:
 
 ```ts{15}
-import {Record, RegisterTemplate} from 'nuxoblivius'
-
-RegisterTemplate('my-template', (raw: object) => {
-    if(raw.data) 
-        return {
-            // Unpack data
-            data: raw.data,
-            // Set count of pages
-            pageCount: raw.meta?.count_pages ?? 1
-        }
-    // Else returns raw
-})
+import {Record} from 'nuxoblivius'
 
 const articles = Record.new<IArticle>('/api/articles')
     .template('my-template')
@@ -75,31 +62,25 @@ console.log(articles.response)
  *    ...
  * ]
  */
-console.log(articles.pagination.current)
-/**
- * 1 
-*/
 ```
 
-## Inline template
-
-Templates can also be written directly in `Record`.
+Также можно написать template-функцию и прямо в `Record`:
 
 ```ts{2-7}
 const articles = Record.new<IArticle>('/api/articles')
     .template((raw) => {
         return {
             data: raw.data,
-            pageCount: raw.meta?.count_pages ?? 1
+            pageCount: raw.meta?.total_count / raw.meta?.per_page ?? 1
         }
     })
 
 await articles.get()
 ```
 
-## Off-the-record use
+## Template вне Record
 
-Framework, has a tool to call template by name, any `object` format data can be used
+Предоставляется возможность использовать template-функцию вне `Record` и `Stor`-а как такового - применимо к любому объекту функцией:
 
 ```ts{10}
 import {RegisterTemplate, CallPattern} from 'nuxoblivius'
@@ -116,10 +97,11 @@ const { data: formatedData } = CallPattern('unpack-template', myData)
  * [{ message: 'message_1' } ...]
  */
 ```
+Функция `CallPattern` распаковывает данные из любого объекта согласно прописанному шаблону.
 
-## Chain of template
+## Цепочка Template
 
-You can make a chain of calls
+Можно использовать `templat`-ы и цепочками:
 
 ```ts
 RegisterTemplate(
@@ -129,8 +111,8 @@ RegisterTemplate(
 
 RegisterTemplate(
     'format', 
-    (raw: object) => ({ 
-        data: CallPattern('unpack-template', raw).data.map(() => <some logic>) 
+    (unpackTemplate: object) => ({ 
+        data: CallPattern('unpack-template', unpackTemplate).data.map(() => <some logic>) 
     })
 )
 
@@ -139,7 +121,7 @@ const { data: formatedData } = CallPattern('format', myData)
 
 ## Protocol
 
-You can pull additional information from the template
+Можно дать доступ к дополнительной информации из ответа api, используя объект `protocol` внутри template и функцию `defineProtocol`:
 
 ```ts{5,6,7,10,14}
 const articles = Record.new<IArticle>('/api/articles')
@@ -148,10 +130,13 @@ const articles = Record.new<IArticle>('/api/articles')
         data: raw.data,
         protocol: {
             meta: raw.meta
+            secondData: 'other data'
         } 
     }))
     // Define protocol for reading data from template
     .defineProtocol<IMetaResponse>('meta', {} /* Default Value */)
+    .defineProtocol<IMetaResponse>('secondData', '' /* Default Value */)
+    .defineProtocol<IMetaResponse>('thirdData', 'third' /* Default Value */)
 
 await articles.get()
 
@@ -163,4 +148,13 @@ console.log(articles.protocol.meta)
  *    perPage: 10
  * }
  */
+console.log(articles.protocol.secondData)
+/**
+ * 'other data'
+ */
+console.log(articles.protocol.thirdData)
+/**
+ * 'third'
+ */
 ```
+Такие данные доступны не из объекта [response](/release/records.html#response), а из отдельного объекта protocol.

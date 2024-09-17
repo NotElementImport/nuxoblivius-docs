@@ -1,12 +1,12 @@
 # Setup
 
-Установка:
+Install to a project
 
 ```shell
 npm i nuxoblivius@latest
 ```
 
-Для избежания некоторых ошибок типизации (например, в инкапсулируемых данных) прописать в  `tsconfig.json`:
+And write rule to `tsconfig.json` (for work encapsulation, and read only)
 ```json
 {
     "compilerOptions": {
@@ -15,7 +15,7 @@ npm i nuxoblivius@latest
 }
 ```
 
-В Nuxt 3 добавить в `nuxt.config.ts`:
+In Nuxt 3. Add module and params
 
 ```ts
 export default defineNuxtConfig({

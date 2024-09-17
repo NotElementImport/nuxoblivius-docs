@@ -1,11 +1,8 @@
 # Sub Stores
 
-`Store` can be like Sub Stores for Another Stores
+`Store` может быть `Sub Stor`-ом внутри другого `Stor`-а (по принципу паттерна `композиция`):
 
-## Basics
-Base using of Sub Store for extends functionality another Store
-
-Example Sub Store class:
+# Пример
 ```ts
 // TNameStore.ts
 
@@ -21,7 +18,22 @@ export class TNameStore {
 }
 ```
 
-To define Sub Store in another Store, use function `subStore()`
+```ts
+// TPhoneStore.ts
+
+export class TPhoneStore {
+    private _price: string = ''
+            price: string
+            
+    private _name: string = ''
+            name: string
+
+    private _os: string = ''
+            os: string
+}
+```
+
+`Sub Store` определяется функцией `subStore()`:
 ```ts
 // UserInfo.ts
 
@@ -30,10 +42,10 @@ import TNameStore from '@/stack/TNameStore'
 import TCharacterisaticStore from '@/stack/TCharacterisaticStore'
 
 class UserInfo {
-    public nameUser = subStore<TNameStore>(TNameStore)
+    public userName = subStore<TNameStore>(TNameStore) // используем TNameStore
+    public userPhone = subStore<TPhoneStore>(TPhoneStore) // используем TPhoneStore
 
-    // and Read only
-
+    // Read-only
     private _characterisatic = subStore<TCharacterisaticStore>(TCharacterisaticStore)
             characterisatic: TCharacterisaticStore
 }
@@ -41,9 +53,13 @@ class UserInfo {
 export default defineStore<UserInfo>(UserInfo)
 ```
 
-## Sub Stores as Query
+Преимущества:
 
-One of the interesting features of Sub Stores is working with queries in Records
+
+
+## Query-параметры из Sub Store
+
+Одно из удобств, предлагаемых `Sub Stor`-ом: можно сформировать из всех его пар "свойство-значение" query-параметры для запроса в родительском `Stor`-е:
 
 ```ts{11}
 // UserInfo.ts
@@ -52,13 +68,14 @@ import {subStore, defineStore} from 'nuxoblivius'
 import TNameStore from '@/stack/TNameStore'
 
 class UserInfo {
+    // используем как Sub Store написанный ранее класс TNameStore:
     public nameUser = subStore<TNameStore>(TNameStore)
 
     public updateNameUser = Record.new('/api/user/update-info/name')
         // constant query 
         .query(this.ref.nameUser, true)
-        // Example rendered query: 
-        // ?firstName=Test&lastName=Testov&surName=Testovic
+        // Полученные query-параметры:
+        // ?firstName=Test&lastName=Testov&surName=Testovich
 }
 
 export default defineStore<UserInfo>(UserInfo)
@@ -66,7 +83,7 @@ export default defineStore<UserInfo>(UserInfo)
 
 ## Sub Stores as Reload in Record
 
-If need track changes in Sub Store and pushing some Query again, use this struct
+Можно отслеживать изменения свойств `Sub Stor`-а и перезагружать запросы с API по ним:
 
 ```ts
 // UserInfo.ts
@@ -79,13 +96,8 @@ class UserInfo {
 
     public updateNameUser = Record.new('/api/user/update-info/name')
         ...
-        // ERROR
         .reloadBy(
-            this.nameUser.ref.firstName
-        )
-        // GOOD
-        .reloadBy(
-            later(() => this.nameUser.ref.firstName)
+            later(() => this.nameUser.ref.firstName) // обращаемся через ref
         )
         ...
 }
@@ -93,4 +105,4 @@ class UserInfo {
 export default defineStore<UserInfo>(UserInfo)
 ```
 
-Sub Stores not defined from start, then use struct `later()`, which later proccesed
+Функцию `later()` дополнительно используем, т.к. `Sub Store` не определён изначально (а лишь после инициализации родительского `Stor`-a).

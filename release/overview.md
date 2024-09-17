@@ -1,8 +1,12 @@
 # Overview
 
-Nuxoblivius is Power Store for Vue 3 and Nuxt 3. Using OOP and Sub Store system 
+Nuxoblivius - многофункциональный State-менеджер (далее - Store) для работы с данными между vue-компонентами. 
 
-Example:
+Поддерживаются Vue 3 и Nuxt 3. 
+
+Используются принципы ООП и Sub-Store (хранилища внутри хранилищ).
+
+Пример:
 
 ```ts
 import {defineStore} from 'nuxoblivius'

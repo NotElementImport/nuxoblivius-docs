@@ -7,18 +7,18 @@ export default defineConfig({
   title: "Nuxoblivius",
   description: "A Power Store for Vue and Nuxt",
 
-  locales: {
-    root: {
-      label: 'English',
-      lang: 'en',
-      link: ''
-    },
-    ru: {
-      label: 'Русский',
-      lang: 'ru',
-      link: '/ru',
-    }
-  },
+  // locales: {
+  //   root: {
+  //     label: 'English',
+  //     lang: 'en',
+  //     link: ''
+  //   },
+  //   ru: {
+  //     label: 'Русский',
+  //     lang: 'ru',
+  //     link: '/ru',
+  //   }
+  // },
 
   themeConfig: {
     logoLink: '/nuxoblivius-docs/',
@@ -41,7 +41,7 @@ export default defineConfig({
             { text: 'Prop (Encapsulation)', link: '/release/store/prop-encapsulation',},
             { text: 'Records', link: '/release/store/records',},
             // { text: 'Storage', link: '/release/store/storage',},
-            { text: 'Dynamic Params', link: '/release/store/dynamic-params',},
+            // { text: 'Dynamic Params', link: '/release/store/dynamic-params',},
           ] },
           { text: 'Sub Stores', link: '/release/sub-store' },
           { text: 'Records', link: '/release/records' },

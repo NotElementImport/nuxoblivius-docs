@@ -1,21 +1,22 @@
 # Store - Records
 
-`Records` is Fetching to API, and get data
+`Record`-ы (записи) - объекты для работы с данными, подгружаемыми с API, предлагающие множество полезных функций и свойств для удобства работы.
 
-[Record](/release/records) is independent object, who had one static method `new`, which create `Record` to work with data from API 
+[Record](/release/records) имеет над собой единственный метод - `new` - ожидающий в аргументе ссылку на API:
 
-
-Definition in store:
 ```ts
 import {defineStore, Record} from 'nuxoblivius'
 
 class Example {
-    public fetchFromServer = Record.new<ISomeData>('/api/my/path')
+    public fetchFromServer = Record.new<ISomeData>('/api/my/path', [])
 }
 
 export default defineStore<Example>(Example)
 ```
+, а также 2-м аргументом можно указать начальное значение свойства.
 
-## More 
+Как и обычные свойства, `Record`-ы могут быть приватными либо публичными.
 
-More information in [Record](/release/records)
+## Подробнее
+
+Подробно обо всех возможностях [Record](/release/records) - в соответствующем разделе. 

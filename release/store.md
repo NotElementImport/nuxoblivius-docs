@@ -1,8 +1,8 @@
 # Store
 
-`Store` using OOP class system
+`Store` использует классовую систему ООП.
 
-To define `Store` as Singletone, use function `defineStore()`
+Для определения хранилища в виде `Singleton`-а используется функция `defineStore()`
 ```ts
 import {defineStore} from 'nuxoblivius'
 
@@ -14,7 +14,7 @@ class Example {
 export default defineStore<Example>(Example)
 ```
 
-To define `Store` as Factory, use function `subStore()`
+Для определения хранилища в виде `Фабрики` используется функция `subStore()`
 ```ts
 import {subStore} from 'nuxoblivius'
 
@@ -22,7 +22,6 @@ class Example {
     public field: number = 0
 }
 
-// Uses in specific moments
 // Factory style
 export default () => subStore<Example>(Example)
 ```

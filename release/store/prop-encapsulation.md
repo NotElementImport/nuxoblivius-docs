@@ -1,13 +1,13 @@
-# Store - Prop (Encapsulation)
+# Store - Инкапсуляция свойств
 
-`Prop` can be `Encapsulation`, or `ReadOnly`
+Свойство может быть, по желанию, `инкапсулировано`:
 
-## `Encapsulation`
+## `Инкапсуляция`
 ```ts
 import {defineStore} from 'nuxoblivius'
 
 class Example {
-    // Encapsulation, reactive field
+    // Инкапсулированное, реактивное свойство
     public _field1: number = 0
         set field1(v: number) {
             this._field1 = v
@@ -17,20 +17,18 @@ class Example {
 export default defineStore<Example>(Example)
 ```
 
-`Encapsulated` field can do anything you want. 
+Весь функционал для свойства остаётся прежним.
 
-Example with Date:
+Пример:
 ```ts
 import {defineStore} from 'nuxoblivius'
 
 class ScheduleInfo {
-    // Encapsulation, reactive field
     public _startDate: string = ''
         set startDate(value: number|Date) {
             this._startDate = this.readDate(value)
         }
 
-    // Encapsulation, reactive field
     public _endDate: string = ''
         set endDate(value: number|Date) {
             this._endDate = this.readDate(value)
@@ -54,13 +52,13 @@ export default defineStore<ScheduleInfo>(ScheduleInfo)
 
 ## `ReadOnly`
 
-Read only `Prop`
+`Свойство` можно сделать доступным только для чтения:
 
 ```ts
 import {defineStore} from 'nuxoblivius'
 
 class Example {
-    // ReadOnly, reactive field
+    // Реактивное свойство, доступное только для чтения
     public _field1: number = 0
             field1: number
 }
@@ -68,16 +66,16 @@ class Example {
 export default defineStore<Example>(Example)
 ```
 
-Can be used in Auth Store
-
+Пример:
 ```ts
 import {defineStore, Record} from 'nuxoblivius'
 
 class AuthStore {
-    // ReadOnly, reactive field
+    // Делаем токен доступным только для чтения:
     public _token: string = ''
             token: string
 
+    // ответ запроса авторизации сделаем нереактивным, т.к. используем единожды
     private _loginAPI = Record.new('/api/login')
 
     public async login(username: string, password: string) {

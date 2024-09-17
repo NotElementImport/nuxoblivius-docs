@@ -9,7 +9,7 @@ Some example:
 import {defineStore, Record} from 'nuxoblivius'
 
 class Example {
-    private _notReactiveField: string = 'important info'
+    private ReactiveField: string = 'important info'
 
     public fetchFromServer = Record.new<ISomeData>('/api/my/path')
         .query({

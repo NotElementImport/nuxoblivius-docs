@@ -1,23 +1,21 @@
-# Store - Prop
+# Store - Свойство
 
-`Prop` - is field (reactive or not)
-
-Prop exist two types:
+Хранилище состоит из полей (свойств), которые могут быть реактивными, либо нет, а также приватными, либо публичными:
 ```ts
 import {defineStore} from 'nuxoblivius'
 
 class Example {
-    // reactive
+    // реактивно; публичное
     public field1: number = 0
 
-    // not reactive
+    // не реактивно; приватное
     private _field2: number = 0
 }
 
 export default defineStore<Example>(Example)
 ```
 
-Reactive `Prop` define basicly, none reactive define with `_`
+Нереактивными будут свойства, названия которых начинаются на `_`.
 
 ```vue
 <script setup lang="ts">
@@ -30,17 +28,18 @@ onMounted(() => {
 </script>
 <template>
     <div>
-        <!-- After Mounted: 10 -->
+        <!-- После монтирования стало равно 10 -->
         {{ Example.field1 }}
-        <!-- After Mounted: 0 (Cannot be modified in Vue files) -->
+        <!-- После монтирования осталось равным 0, т.к. свойство не реактивно -->
         {{ Example._field2 }}
     </div>
 </template>
 ```
 
-Any `Prop` had `ref` (reference object) version.
+# Ref 
 
-Example: 
+К каждому свойству хранилища можно обратиться через объект `ref`:
+
 ```vue
 <template>
     <div>
@@ -50,23 +49,23 @@ Example:
 </template>
 ```
 
-`ref` had this structure:
+, содержащий:
 ```ts
 interface IRef<T> {
-    // Name of Field
+    // Имя поля
     name: string
 
-    // Value of Field
+    // Значение
     get value(): T
 
-    // Is empty Field
+    // Информация, пусто ли поле
     get isEmpty(): boolean
 
     // Check if name field start with $
     // Can locked procces while empty
     get isImportant(): boolean
 
-    // Track to changes
+    // Watch-ер для отслеживания изменений значения
     watch(callback: Function): void
 }
 ```
