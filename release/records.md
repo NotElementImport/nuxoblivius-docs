@@ -337,7 +337,7 @@ class User {
     public users = Record.new<IUser[]>('/api/users')
         .pagination.setup('query:page') // Инициализация пагинации. Объявление параметра. Перед двоеточием: 'path'|'query'. После двоеточия: значение параметра
         .pagination.autoReload() // автоматическая подгрузка новых страничек
-        .expandResponse() // суммирование страничек
+        .appendsResponse() // суммирование страничек
 }
 
 export default defineStore<User>(User)
@@ -355,7 +355,7 @@ export default defineStore<User>(User)
 * `toFirst()` - перемещение к первой странице
 * `toLast()` - перемещение к последней странице
 
-Если в response необходимо суммировать (а не перезаписывать) страницы - можно использовать функцию [expandResponse](/release/records.html#expandResponse) над `Record`.
+Если в response необходимо суммировать (а не перезаписывать) страницы - можно использовать функцию [appendsResponse](/release/records.html#appendsResponse) над `Record`.
 
 ## Заголовки ответа
 
@@ -503,7 +503,7 @@ public item = Record.new<ICabinet>('/api/item/{id}', {})
 2. Функция-возврат массива, из которого берём данные (который может быть и вне какого-либо `Record`-а)
 3. Функция, содержащая условие для взятия данных из массива (например, при совпадении id)
 
-## expandResponse
+## appendsResponse
 
 Функция, используя которую, при многократных запросах одного `Record`-а к API все [Response](/release/records.html#Response)-ы будут суммироваться в один. Может быть полезным для [пагинации](/release/records.html#Пагинация).
 
@@ -515,7 +515,7 @@ import {defineStore, Record} from 'nuxoblivius'
 class User {
     public users = Record.new<IUser[]>('/api/users')
         .pagination.setup('query:page') // инициализация пагинации
-        .expandResponse() // суммирование страничек
+        .appendsResponse() // суммирование страничек
 }
 
 export default defineStore<User>(User)
