@@ -26,13 +26,13 @@ export default defineConfig({
     carbonAds: undefined,
 
     nav: [
-      { text: '1.1.0', link: '/release/overview' },
-      { text: '0.4.X', link: '/beta/overview' },
+      { text: '1.x', link: '/release/overview' },
+      { text: '0.5.x', link: '/beta/overview' },
     ],
 
     sidebar: [
       {
-        text: '1.1.0',
+        text: '1.x',
         items: [
           { text: 'Overview', link: '/release/overview' },
           { text: 'Setup', link: '/release/setup' },
@@ -45,12 +45,12 @@ export default defineConfig({
           ] },
           { text: 'Sub Stores', link: '/release/sub-store' },
           { text: 'Records', link: '/release/records' },
-          { text: 'Records Extends', link: '/release/records-extends' },
-          { text: 'Records Templates', link: '/release/template' },
+          { text: 'Global Functions', link: '/release/global-functions' },
+          { text: 'Records Caching', link: '/release/records-caching' },
         ]
       },
       {
-        text: '0.4.X',
+        text: '0.5.x',
         items: [
           { text: 'Setup', link: '/beta/setup' },
           { text: 'Store', link: '/beta/store/defineStore', items: [

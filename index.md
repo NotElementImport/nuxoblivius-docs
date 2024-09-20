@@ -9,10 +9,10 @@ hero:
   tagline: Vue 3 and Nuxt 3
   actions:
     - theme: brand
-      text: "Docs v 1.1.0"
+      text: "Docs v 1.x"
       link: /release/overview
     - theme: alt
-      text: "Docs v 0.4.x"
+      text: "Docs v 0.5.x"
       link: /beta/overview
     - theme: alt
       text: API Examples

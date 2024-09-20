@@ -12,7 +12,7 @@ hero:
       text: "Docs v 1.0"
       link: /release/overview
     - theme: alt
-      text: "Docs v 0.4.x"
+      text: "Docs v 0.5.x"
       link: /beta/overview
     - theme: alt
       text: API Examples

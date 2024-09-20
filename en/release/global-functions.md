@@ -1,4 +1,4 @@
-# Records Extends
+# Global Functions
 
 `Records` More about optimizations and features of Records
 
@@ -97,7 +97,7 @@ class Articles {
 export default defineStore<Articles>(Articles)
 ```
 
-More in [Records (Templates)](/release/template.html)
+More in [Records (Templates)](/release/records-caching.html)
 
 ## Temp Caching Responses <Badge type="info" text="^ 1.1.0" style='margin-top: 7px;'/>  
 

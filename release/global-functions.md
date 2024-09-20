@@ -1,10 +1,8 @@
-# Records Templates
+# Global Functions
 
-## Основы
+## Templates <Badge type="info" text="^ 1.1.0" style='margin-top: 7px;'/>  
 
 Для избавления от рутинных действий при работе с API предусмотрены `template`-ы, задача которых - автоматическое переформатирование приходящих с API данных.
-
-## Использование
 
 Пример исходных данных:
 ```json
@@ -24,7 +22,7 @@
 }
 ```
 
-Единственная полезная часть ответа - содержимое data (к meta-данным также можно иметь доступ, об этом позже).
+Единственная полезная часть ответа - содержимое data (к meta-данным также можно иметь доступ, об этом в [Protocol](/release/global-functions.html#Protocol)).
 
 Можно написать template функцией `RegisterTemplate`:
 
@@ -78,9 +76,7 @@ const articles = Record.new<IArticle>('/api/articles')
 await articles.get()
 ```
 
-## Template вне Record
-
-Предоставляется возможность использовать template-функцию вне `Record` и `Stor`-а как такового - применимо к любому объекту функцией:
+Предоставляется возможность использовать template-функцию вне `Record` и `Stor`-а как такового - применимо к любому объекту - функцией `CallPattern`:
 
 ```ts{10}
 import {RegisterTemplate, CallPattern} from 'nuxoblivius'
@@ -98,8 +94,6 @@ const { data: formatedData } = CallPattern('unpack-template', myData)
  */
 ```
 Функция `CallPattern` распаковывает данные из любого объекта согласно прописанному шаблону.
-
-## Цепочка Template
 
 Можно использовать `templat`-ы и цепочками:
 
@@ -119,9 +113,46 @@ RegisterTemplate(
 const { data: formatedData } = CallPattern('format', myData)
 ```
 
+```ts
+RegisterTemplate('unpack-data-and-structing', (raw: IRawArticles) => {
+    // Calling another template
+    raw = CallPattern('unpack-data', raw)
+
+    if(raw.data) {
+        // Adding checking for existence of Description 
+        raw.data = raw.data.map(
+            (value) => ({
+                ...value,
+                hadDescription: value.desc ? true : false
+            })
+        )
+
+        return raw
+    }
+})
+```
+
+```ts
+// Articles.ts
+
+import {defineStore, Record} from 'nuxoblivius'
+
+class Articles {
+    public articles = Record.new<IArticle>('/api/articles')
+        .template('unpack-data-and-structing')
+        // Also can do like that
+        .template((raw: IRawArticle) => {
+            return { data: raw.data }
+        })
+        ...
+}
+
+export default defineStore<Articles>(Articles)
+```
+
 ## Protocol
 
-Можно дать доступ к дополнительной информации из ответа api, используя объект `protocol` внутри template и функцию `defineProtocol`:
+Можно дать доступ к дополнительной информации из ответа api, используя объект `protocol` внутри template и функцию `defineProtocol` из [Record](/release/records.html):
 
 ```ts{5,6,7,10,14}
 const articles = Record.new<IArticle>('/api/articles')
@@ -158,3 +189,33 @@ console.log(articles.protocol.thirdData)
  */
 ```
 Такие данные доступны не из объекта [response](/release/records.html#response), а из отдельного объекта protocol.
+
+## setDefaultHeader
+
+Доступна функция `setDefaultHeader`, которая, как понятно из названия, добавляет по умолчанию определенный заголовок при каждом запросе к API каждого `Record`-а:
+
+```ts
+import { SetDefaultHeader } from 'nuxoblivius'
+
+SetDefaultHeader('Content-Type', "application/json")
+```
+
+## setDefaultAuth
+
+Доступна функция `setDefaultAuth`, которая, аналогично предыдущей, добавляет по умолчанию заголовок `Authorization` с определенным значением при каждом запросе к API каждого `Record`-а:
+
+```ts
+import { SetDefaultHeader } from 'nuxoblivius'
+
+SetDefaultAuth("Bearer |vmxzweqorekwfdsafmswqerqewrewhvhgl")
+```
+
+## OnRecordFetchFailed
+
+Доступна функция `OnRecordFetchFailed`, принимающая в аргументе функцию и выполняющая её при любом запросе к API, завершившемся ошибкой:
+
+```ts
+import { OnRecordFetchFailed } from 'nuxoblivius'
+
+OnRecordFetchFailed(() => {console.log('Oops')})
+```

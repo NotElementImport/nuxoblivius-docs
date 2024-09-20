@@ -10,7 +10,7 @@ var config_default = defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: "1.0.0", link: "/release/overview" },
-      { text: "0.4.X", link: "/beta/overview" },
+      { text: "0.5.x", link: "/beta/overview" },
       { text: "Examples", link: "/markdown-examples/" }
     ],
     sidebar: [
