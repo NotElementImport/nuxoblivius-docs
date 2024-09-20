@@ -210,12 +210,12 @@ import { SetDefaultHeader } from 'nuxoblivius'
 SetDefaultAuth("Bearer |vmxzweqorekwfdsafmswqerqewrewhvhgl")
 ```
 
-## OnRecordFetchFailed
+## onRecordFetchFailed
 
-Доступна функция `OnRecordFetchFailed`, принимающая в аргументе функцию и выполняющая её при любом запросе к API, завершившемся ошибкой:
+Доступна функция `onRecordFetchFailed`, принимающая в аргументе функцию и выполняющая её при любом запросе к API, завершившемся ошибкой:
 
 ```ts
-import { OnRecordFetchFailed } from 'nuxoblivius'
+import { onRecordFetchFailed } from 'nuxoblivius'
 
-OnRecordFetchFailed(() => {console.log('Oops')})
+onRecordFetchFailed(() => {console.log('Oops')})
 ```
