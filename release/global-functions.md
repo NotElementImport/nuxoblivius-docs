@@ -22,7 +22,7 @@
 }
 ```
 
-Единственная полезная часть ответа - содержимое data (к meta-данным также можно иметь доступ, об этом в [Protocol](/release/global-functions.html#Protocol)).
+Единственная полезная часть ответа - содержимое data (к meta-данным также можно иметь доступ, об этом в [Protocol](/release/global-functions.html#protocol)).
 
 Можно написать template функцией `RegisterTemplate`:
 
@@ -41,7 +41,7 @@ RegisterTemplate('my-template', (raw: object) => {
 
 , а затем использовать его при определении [Record](/release/records.html)-а:
 
-```ts{15}
+```ts
 import {Record} from 'nuxoblivius'
 
 const articles = Record.new<IArticle>('/api/articles')

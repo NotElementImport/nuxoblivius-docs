@@ -34,7 +34,7 @@ export class TPhoneStore {
 ```
 
 `Sub Store` определяется функцией `subStore()`:
-```ts
+```ts{8-9,12}
 // UserInfo.ts
 
 import {subStore, defineStore} from 'nuxoblivius'
@@ -61,7 +61,7 @@ export default defineStore<UserInfo>(UserInfo)
 
 Одно из удобств, предлагаемых `Sub Stor`-ом: можно сформировать из всех его пар "свойство-значение" query-параметры для запроса в родительском `Stor`-е:
 
-```ts{11}
+```ts{12}
 // UserInfo.ts
 
 import {subStore, defineStore} from 'nuxoblivius'
@@ -85,7 +85,7 @@ export default defineStore<UserInfo>(UserInfo)
 
 Можно отслеживать изменения свойств `Sub Stor`-а и перезагружать запросы с API по ним:
 
-```ts
+```ts{11-13}
 // UserInfo.ts
 
 import {subStore, defineStore, later} from 'nuxoblivius'

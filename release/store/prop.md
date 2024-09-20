@@ -61,10 +61,6 @@ interface IRef<T> {
     // Информация, пусто ли поле
     get isEmpty(): boolean
 
-    // Check if name field start with $
-    // Can locked procces while empty
-    get isImportant(): boolean
-
     // Watch-ер для отслеживания изменений значения
     watch(callback: Function): void
 }
