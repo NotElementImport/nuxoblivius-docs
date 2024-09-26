@@ -7,6 +7,8 @@ export default defineConfig({
   title: "Nuxoblivius",
   description: "A Power Store for Vue and Nuxt",
 
+  assetsDir: '',
+
   head: [
     ['link', { rel: 'icon', href: '/nuxoblivius-docs/nuxoblivius.png', type: 'image/png' }]
   ],
