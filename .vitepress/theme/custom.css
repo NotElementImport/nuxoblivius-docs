@@ -5,4 +5,38 @@
     --vp-button-brand-active-bg: #969796;
 
     --vp-c-brand-1: #78be7e;
+
+    --vp-layout-max-width: calc(1152px + 64px);
+}
+
+.VPHome .main {
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.VPHome .main::before {
+    content: "";
+    background: url('/nuxoblivius-docs/nuxoblivius.png');
+    background-position: center;
+    background-size: 100%;
+    aspect-ratio: 1/1;
+    display: block;
+    position: absolute;
+    right: 0.3em;
+    pointer-events: none;
+    top: 0;
+    height: 100%;
+    z-index: 1;
+}
+.VPHome .main::after {
+    content: "";
+    background: linear-gradient(-90deg, #489178 0%, rgba(0,212,255,0) 100%);
+    display: block;
+    pointer-events: none;
+    position: absolute;
+    right: 0em;
+    width: 100%;
+    top: 0;
+    opacity: 0.1;
+    height: 100%;
 }

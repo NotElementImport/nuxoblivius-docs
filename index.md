@@ -3,32 +3,75 @@
 layout: home
 
 hero:
-  logo: /NX-Logo-Temp.png
+  logo: /nuxoblivius-docs/nuxoblivius.png
   name: "Nuxoblivius"
   text: "A Power Store for"
   tagline: Vue 3 and Nuxt 3
   actions:
     - theme: brand
-      text: "Docs v 1.x"
-      link: /release/overview
+      text: "Docs"
+      link: /release/setup
     - theme: alt
-      text: "Docs v 0.5.x"
+      text: "API"
       link: /beta/overview
-    - theme: alt
-      text: API Examples
-      link: /examples/
+    # - theme: alt
+    #   text: API Examples
+    #   link: /examples/
 
 features:
-  - title: Ease Query To API
-    details: "Create Records for fetching data from API easyly with many functions. With SSR Support"
-  - title: Reactive without ref()
-    details: Use OOP for controll in project, and dont worry about less reactivity
-  - title: Keep data and use again
-    details: Easy work for storing data in Client
+  - title: 💡 Record
+    details: Удобный Fetch API, с удобной типизацией, возможность кастомизации. Удобен для разработки SPA приложений
+  - title: 💡 State Manager
+    details: Использование классов и ООП для упрощения разработки приложений
+  - title: 💡 Поддержка
+    details: Постоянные обновления, и улучшения пакета
 ---
 
 <br>
 <br>
+
+# ⚙ Setup
+
+Установить nuxoblivius изспользуя комманду
+
+<section style="padding: 1em; padding-bottom: 0.1em; background: var(--vp-c-bg-elv); border-radius: 12px;">
+  <div>
+    <span style="color: var(--vp-c-text-2); display: block; margin-bottom: -8px; font-size: 16px; font-weight: 500; text-transform: uppercase;">
+      npm:
+    </span>
+
+```shell
+npm i nuxoblivius@latest
+```
+
+  </div>
+
+  <div>
+    <span style="color: var(--vp-c-text-2); display: block; margin-bottom: -8px; margin-top: 1em; font-size: 16px; font-weight: 500; text-transform: uppercase;">
+      pnpm:
+    </span>
+
+```shell
+pnpm i nuxoblivius@latest
+```
+
+  </div>
+
+  <div>
+    <span style="color: var(--vp-c-text-2); display: block; margin-bottom: -8px; margin-top: 1em; font-size: 16px; font-weight: 500; text-transform: uppercase;">
+      yarn:
+    </span>
+
+```shell
+yarn add nuxoblivius@latest
+```
+
+  </div>
+</section>
+
+<br>
+<br>
+
 
 <script setup>
 import { VPTeamMembers } from 'vitepress/theme'
@@ -37,7 +80,7 @@ const members = [
   {
     avatar: 'https://avatars.githubusercontent.com/u/70256601?v=4',
     name: 'NotElementImport',
-    title: 'Creator',
+    title: 'Придумал',
     links: [
       { icon: 'github', link: 'https://github.com/NotElementImport' },
     ]
@@ -45,7 +88,7 @@ const members = [
   {
     avatar: 'https://avatars.githubusercontent.com/u/92153941?v=4',
     name: 'Perfect03',
-    title: 'Docs Co-writer',
+    title: 'Доработка, документация',
     links: [
       { icon: 'github', link: 'https://github.com/Perfect03' },
     ]
@@ -53,8 +96,8 @@ const members = [
 ]
 </script>
 
-# Our Team
+# 🌐 Our Team
 
-Say hello to our awesome team.
+Команда, которая разрабатывает
 
 <VPTeamMembers size="small" :members="members" />
