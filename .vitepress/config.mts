@@ -39,11 +39,12 @@ export default defineConfig({
 
     sidebar: [
       {
-        text: '1.5.0',
+        text: '1.5.4',
         items: [
           // { text: 'Overview', link: '/release/overview' },
-          { text: 'Установка', link: '/release/setup' },
-          { text: 'Настройка Nuxt', link: '/release/nuxt' },
+          { text: 'Установка', link: '/release/setup', items: [
+            { text: 'Nuxt', link: '/release/nuxt' },
+          ]},
           { text: 'State Manager', link: '/release/state-manager' },
           // { text: 'Record (Fetch)', link: '/release/record' },
           // { text: 'Store', link: '/release/store', items: [
@@ -54,7 +55,8 @@ export default defineConfig({
             // { text: 'Dynamic Params', link: '/release/store/dynamic-params',},
           // ] },
           // { text: 'Sub Stores', link: '/release/sub-store' },
-          { text: 'Records', link: '/release/records' },
+          { text: 'Record (Fetch)', link: '/release/record' },
+          // { text: 'Records', link: '/release/records' },
           { text: 'Global Functions', link: '/release/global-functions' },
           { text: 'Records Caching', link: '/release/records-caching' },
         ]

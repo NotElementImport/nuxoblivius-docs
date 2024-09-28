@@ -34,10 +34,9 @@ export default () => subStore(Counter)
 import Counter from './store/Counter'
 </script>
 <template>
-    <button
-        @click="Counter.value++"
-        v-html="Counter.value"
-    />
+    <button @click="Counter.value++">
+        {{ Counter.value }}
+    </button>
 </template>
 ```
 
@@ -47,10 +46,9 @@ import useCounter from './store/Counter'
 const Counter = useCounter()
 </script>
 <template>
-    <button
-        @click="Counter.value++"
-        v-html="Counter.value"
-    />
+    <button @click="Counter.value++">
+        {{ Counter.value }}
+    </button>
 </template>
 ```
 :::

@@ -80,7 +80,7 @@ const members = [
   {
     avatar: 'https://avatars.githubusercontent.com/u/70256601?v=4',
     name: 'NotElementImport',
-    title: 'Придумал',
+    title: 'Идея, разработка',
     links: [
       { icon: 'github', link: 'https://github.com/NotElementImport' },
     ]
@@ -88,7 +88,7 @@ const members = [
   {
     avatar: 'https://avatars.githubusercontent.com/u/92153941?v=4',
     name: 'Perfect03',
-    title: 'Доработка, документация',
+    title: 'Тестирование, документация',
     links: [
       { icon: 'github', link: 'https://github.com/Perfect03' },
     ]

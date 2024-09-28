@@ -13,5 +13,8 @@
   "license": "ISC",
   "devDependencies": {
     "vitepress": "^1.1.0"
+  },
+  "dependencies": {
+    "nuxoblivius": "^1.5.4"
   }
 }
