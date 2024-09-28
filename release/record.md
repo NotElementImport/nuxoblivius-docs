@@ -23,7 +23,7 @@ class Test {
 
 export default defineStore(Test)
 ```
-```ts{5} [В Pinia]
+```ts{5} [В Pinia🍍]
 import { defineStore } from 'pinia'
 import { Record } from 'nuxoblivius'
 
