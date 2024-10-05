@@ -139,6 +139,24 @@ await posts.get()
     <pre> {{ posts.response }} </pre>
 </template>
 ```
+```vue{15} [Lazy SSR]
+<script setup lang="ts">
+import { Record, useLazySpread } from 'nuxoblivius'
+
+const posts = Record.new<IResponseType>('/api/posts')
+
+// Не будет задерживать отрисовку на клиенте
+// Так-же позволяет на сервере одновременно
+// делать несколько запросов, без сильных задержек
+await useLazySpread([
+    () => posts.get()
+]) 
+</script>
+<template>
+    <!-- Реактивный Response -->
+    <pre> {{ posts.response }} </pre>
+</template>
+```
 :::
 
 ## Обработка ошибок
@@ -270,7 +288,7 @@ posts.clearDynamicQuery() // Удаляет всё кроме запеченны
 
 Настройка Path Param, для запроса можно так
 
-:::info Path Param
+::: info Path Param
 Это параметры для url запроса пример:
 /api/test/\{id\}
 
@@ -393,7 +411,280 @@ const posts = Record.new<IResponseType>('/api/posts')
 ```
 :::
 
-## Авто перезапуск запроса
+<script setup>
+import { ref } from 'vue'
+import { Record } from 'nuxoblivius'
+
+const q = ref('')
+
+const posts = Record.new('https://dummyjson.com/posts/search')
+    .pagination.setup('path:null')
+    .pagination.autoReload()
+    .oneRequestAtTime()
+    .template(raw => ({ data: raw.posts, pageCount: ~~(raw.total * (1 / 3)) }))
+    .swapMethod('lazy')
+    .createTag('query:q', 'full')
+    .createTag('path:null', 'full')
+    .rule({ 'q': '<>' }, $ => $.reset({ pagination: true }))
+    .rule({ null: '*' }, $ => {
+        $.onlyOnEmpty().response = posts.cached({ 'null': posts.pagination.current }) ?? $.onlyOnEmpty(false).response
+    })
+    .query({ q, limit: 3, select: "title,body", skip: () => ((posts.pagination.current - 1) * 3) }, true)
+    .reloadBy(q)
+
+posts.get()
+</script>
+
+## Шаблоны `Pattern Response Reader`
+
+Record поддерживает редактирование `Response` запроса, для этого используется `template()`. Шаблоны позволяют уменьшить код и улучшить производительность написания кода
+
+Пример (`Входные данные`):
+```json
+{
+    "items": [ 
+        {
+            "title": "Test Title",
+            "content": "My content"
+        }
+        ...
+    ],
+    "total": 30,
+    "lastPage": 3,
+    "perPage": 10
+}
+```
+Пример (`Обработка`):
+
+::: code-group
+```ts [Inline]
+const posts = Record.new<IResponseType>('/api/posts')
+    .template(raw => {
+        if(raw.items) {
+            return {
+                data: raw.items, // Данные с которыми будем рабоать
+                pageCount: raw.lastPage // Кол-во страниц с данными
+            }
+        }
+    })
+```
+```ts [Global Definition]
+import { Record, RegisterTemplate } from 'nuxoblivius'
+
+// Регистрируем шаблон для многократного использования
+RegisterTemplate('Read items', raw => {
+    if(raw.items) {
+        return {
+            data: raw.items, // Данные с которыми будем рабоать
+            pageCount: raw.lastPage // Кол-во страниц с данными
+        }
+    }
+})
+
+const posts = Record.new<IResponseType>('/api/posts')
+    .template('Read items')
+```
+:::
+
+На выходе выйдет так
+
+```ts
+await posts.get()
+
+console.log(posts.response)
+/**
+ * Result:
+ * [{ title: "Test Title", content: "My content" }, ...]
+ */
+```
+### Доп данные (Protocol)
+
+## Модуль пагинации
+
+Можно настроить пагинацию для запроса
+
+::: code-group
+```ts [Query / Search Param]
+Record.new<IResponseType>('/api/posts')
+    // Добавляем, включаем пагинацию
+    // page добавиться в search params
+    // /api/posts?page=1
+    .pagination.setup('query:page')
+```
+```ts [Path Param]
+Record.new<IResponseType>('/api/posts/{page}')
+    // Добавляем, включаем пагинацию
+    // page добавиться в search params
+    // /api/posts/1
+    .pagination.setup('path:page')
+```
+:::
+
+⚠ Обязательно для пагинации нужно использовать [#шаблон](/release/record.md#шаблоны-pattern-response-reader) ⚠
+
+```ts{7}
+Record.new<IResponseType>('/api/posts')
+    // data -> Возвращает сами элементы с которыми будем работать
+    // pageCount -> Кол-во страниц доступных для пагинации
+    .template(raw => ({ data: raw.items, pageCount: raw.lastPage }))
+```
+
+Так-же можно добавить авто перезагрузку данных, когда меняется страница
+
+```ts{3}
+Record.new<IResponseType>('/api/posts')
+    .pagination.setup('query:page')
+    .pagination.autoReload()
+```
+
+Запуск пагинации
+
+::: code-group
+```ts{4} [След. стр.]
+const posts = Record.new<IResponseType>('/api/posts')
+    .pagination.setup('query:page')
+
+posts.pagination.next()
+```
+```ts{4} [Пред. стр.]
+const posts = Record.new<IResponseType>('/api/posts')
+    .pagination.setup('query:page')
+
+posts.pagination.prev()
+```
+```ts{4} [На первую]
+const posts = Record.new<IResponseType>('/api/posts')
+    .pagination.setup('query:page')
+
+posts.pagination.toFirst()
+```
+```ts{4} [На последнию]
+const posts = Record.new<IResponseType>('/api/posts')
+    .pagination.setup('query:page')
+
+posts.pagination.toLast()
+```
+```ts{4} [Выбрать]
+const posts = Record.new<IResponseType>('/api/posts')
+    .pagination.setup('query:page')
+
+posts.pagination.current = 2
+```
+:::
+
+Обработка пагинации
+
+```ts
+const posts = Record.new<IResponseType>('/api/posts')
+    .pagination.setup('query:page')
+
+// Получить страницу
+console.log(posts.pagination.current)
+// Result: 1
+
+// Последняя страница
+console.log(posts.pagination.lastPage)
+// Result: 10
+
+// Это последняя страница?
+console.log(posts.pagination.isLastPage)
+// Result: false
+```
+#### Пагинация демо (+ кэширование)
+
+<br>
+
+<section class="tabs">
+  <input type="checkbox" id="uid1"/>
+  <label class="tabs-swap" for="uid1"/>
+  <section class="tabs-render">
+    <section :class="['render-list', posts.loading && 'loading']" style="min-height: 392px;">
+        <article class="render-block" v-for="item in posts.response">
+            <section class="main limit-text-2">
+                {{ item.title }}
+            </section>
+            <section class="sub limit-text-2">
+                {{ item.body }}
+            </section>
+        </article>
+    </section>
+    <section :class="['render-footer', posts.loading && 'loading']">
+      <button 
+        @click="posts.pagination.toFirst()"
+        v-show="!posts.pagination.current != 1">
+        Первая стр.
+      </button>
+      <button 
+        @click="posts.pagination.prev()"
+        v-show="posts.pagination.current != 1">
+        Пред.
+      </button>
+      <button 
+        @click="posts.pagination.next()"
+        v-show="!posts.pagination.isLastPage">
+        След.
+      </button>
+      <button 
+        @click="posts.pagination.toLast()"
+        v-show="!posts.pagination.isLastPage">
+        Посл. стр.
+      </button>
+      <span style="margin-left: auto;">
+        {{ `${posts.pagination.current}/${posts.pagination.lastPage}` }}
+      </span>
+    </section>
+    <a style="margin-top: 0.5em; display: inline-block; opacity: 0.5;" href="https://dummyjson.com/"> Posts by: DummyJSON </a>
+  </section>
+  <section class="tabs-source">
+
+```vue
+<script setup lang="ts">
+import { Record } from 'nuxoblivius'
+import { useCached } from 'nuxoblivius/presets'
+
+const posts = Record.new<IResponseType>('https://dummyjson.com/posts')
+    // Пагинация
+    .pagination.setup('query:page')
+    .pagination.autoReload()
+    .template(raw => ({ data: raw.posts, pageCount: raw.total }))
+    .query({ limit: 3 })
+    // Кэширование
+    .preset(useCached(['query:page']))
+
+posts.get()
+</script>
+<template>
+    <section :class="['list', posts.loading && 'loading']">
+        <Article v-for="post in posts.response" :post="post" />
+    </section>
+    <section :class="['pagination', posts.loading && 'loading']">
+        <UXButton
+            v-show="posts.pagination.current != 1"
+            caption="Первая стр."
+            @click="posts.pagination.prev()"/>
+        <UXButton
+            v-show="posts.pagination.current != 1"
+            caption="Пред."
+            @click="posts.pagination.prev()"/>
+        <UXButton
+            v-show="!posts.pagination.isLastPage"
+            caption="След."
+            @click="posts.pagination.next()"/>
+        <UXButton
+            v-show="!posts.pagination.isLastPage"
+            caption="Посл. стр."
+            @click="posts.pagination.toLast()"/>
+        <PagInfo 
+            :current="posts.pagination.current"
+            :count="posts.pagination.lastPage"/>
+    </section>
+</template>
+```
+
+  </section>
+</section>
+
+## Авто перезапуск запроса <Badge type="tip" text="Работает только на клиенте" />
 
 Авто перезапуск запроса, это отслеживания свойство, и когда оно меняется Record автоматически перезапускает запрос
 
@@ -404,10 +695,37 @@ Record.new<IResponseType>('/api/posts/search')
     .query({ q })
     .reloadBy(q)
 ```
+Авто перезапуск демо
 
-Demo:
+<section class="tabs">
+  <input type="checkbox" id="uidau"/>
+  <label class="tabs-swap" for="uidau"/>
+  <section class="tabs-render">
+    <section class="render-tools">
+        <button @click="e => posts.get()">
+            🔍
+        </button>
+        <input
+            type="search"
+            v-model.lazy="q"
+            style="flex: 1 1;"
+            placeholder="Поиск..."
+        />
+    </section>
+    <section :class="['render-list', posts.loading && 'loading']" style="min-height: 392px;">
+        <article class="render-block" v-for="item in posts.response">
+            <section class="main limit-text-2">
+                {{ item.title }}
+            </section>
+            <section class="sub limit-text-2">
+                {{ item.body }}
+            </section>
+        </article>
+    </section>
+    <a style="margin-top: 0.5em; display: inline-block; opacity: 0.5;" href="https://dummyjson.com/"> Posts by: DummyJSON </a>
+  </section>
+  <section class="tabs-source">
 
-:::details 💡 Исходный код
 ```vue
 <script setup lang="ts">
 import { Record } from 'nuxoblivius'
@@ -415,16 +733,16 @@ import { ref } from 'vue'
 
 const q = ref('')
 
-Record.new<IResponseType>('/api/posts/search')
+const posts = Record.new<IResponseType>('https://dummyjson.com/posts/search')
     .oneRequestAtTime()
     .query({ q, limit: 3 })
     .reloadBy(q)
 
-Posts.get()
+posts.get()
 </script>
 <template>
     <SearchToolbar v-model="q"/>
-    <section :class="['list', Posts.loading && 'list-loading']">
+    <section :class="['list', posts.loading && 'list-loading']">
         <article clas="article" v-for="post in posts.response">
             <div class="title"> {{ post.title }} </div>
             <div class="body">  {{ post.body }} </div>
@@ -432,50 +750,14 @@ Posts.get()
     </section>
 </template>
 ```
-:::
 
-<script setup>
-import { ref } from 'vue'
-import { Record } from 'nuxoblivius'
-
-const q = ref('')
-
-const posts = Record.new('https://dummyjson.com/posts/search')
-    .oneRequestAtTime()
-    .template(raw => ({ data: raw.posts }))
-    .query({ q, limit: 3, select: "title,body" }, true)
-    .reloadBy(q)
-
-posts.get()
-</script>
-<section class="playground">
-    <section class="tools">
-        <button @click="e => posts.get()">
-            🔍
-        </button>
-        <input
-            v-model.lazy="q"
-            style="flex: 1 1;"
-            placeholder="Поиск..."
-        />
-    </section>
-    <section :class="['list', posts.loading && 'loading']" style="min-height: 392px;">
-        <article class="playground-object" v-for="item in posts.response">
-            <section class="main limit-text">
-                {{ item.title }}
-            </section>
-            <section class="sub limit-text">
-                {{ item.body }}
-            </section>
-        </article>
-    </section>
-    <a style="margin-top: 0.5em; display: inline-block; opacity: 0.5;" href="https://dummyjson.com/"> Posts by: DummyJSON </a>
+  </section>
 </section>
 
-## Кэширование запросов <Badge type="warning" text="⚠ Работает только на клиенте" />
+## Кэширование запросов <Badge type="tip" text="Работает только на клиенте" />
 
-::: info Важно
-Кэширование постоянно дорабатывается
+::: warning ⚠ Кэширование постоянно дорабатывается
+ 
 :::
 
 Для запросов есть возможность кэширования на клиенте.
@@ -510,7 +792,35 @@ posts.cached({ page: null })
 posts.cached({ page: '<>' })
 ```
 
-## Тонкая настройка
+### Preset: useCached
+
+Для автоматизации использования кэширования был разработан `useCached` пресет
+
+```ts{5-6}
+import { Record } from 'nuxoblivius'
+import { useCached } from 'nuxoblivius/presets'
+
+const posts = Record.new<IResponseType>('/api/posts')
+    // Указываем тэги (тэги будут созданы автоматически)
+    .preset(useCached(['query:page']))
+```
+
+Он позволяет использовать старые запросы, заместо запуска нового запроса
+
+`useCached` заменяет вот такую структуру
+
+```ts
+const posts = Record.new<IResponseType>('/api/posts')
+    .preset(useCached(['query:page'])) // [!code ++]
+    .createTag('query:page', 'full') // [!code --]
+    .rule({ 'page': '*' }, $ => { // [!code --]
+        $.onlyOnEmpty().response = // [!code --]
+            $.cached({ 'page': posts.params.query }) // [!code --]
+            ?? $.onlyOnEmpty(false).response // [!code --]
+    }) // [!code --]
+```
+
+[(Кэширования + Пагинация) демо](/release/record.md#пагинация-демо-кэширование)
 
 ## SPA оптимизация
 

@@ -39,7 +39,7 @@ export default defineConfig({
 
     sidebar: [
       {
-        text: '1.5.4',
+        text: '1.5.X',
         items: [
           // { text: 'Overview', link: '/release/overview' },
           { text: 'Установка', link: '/release/setup', items: [
