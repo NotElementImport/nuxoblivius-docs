@@ -1,31 +1,31 @@
 {
-  "hash": "305458d1",
-  "configHash": "adc8cd3b",
-  "lockfileHash": "7a46bef3",
-  "browserHash": "1d6b2695",
+  "hash": "6b156330",
+  "configHash": "351b2c7c",
+  "lockfileHash": "144ac614",
+  "browserHash": "07a06a9e",
   "optimized": {
     "vue": {
       "src": "../../../node_modules/vue/dist/vue.runtime.esm-bundler.js",
       "file": "vue.js",
-      "fileHash": "68e11cd7",
+      "fileHash": "1ea44109",
       "needsInterop": false
     },
     "vitepress > @vue/devtools-api": {
       "src": "../../../node_modules/@vue/devtools-api/dist/index.js",
       "file": "vitepress___@vue_devtools-api.js",
-      "fileHash": "90401637",
+      "fileHash": "696a3178",
       "needsInterop": false
     },
     "vitepress > @vueuse/core": {
       "src": "../../../node_modules/@vueuse/core/index.mjs",
       "file": "vitepress___@vueuse_core.js",
-      "fileHash": "4cd10d5a",
+      "fileHash": "e3e80253",
       "needsInterop": false
     },
     "nuxoblivius": {
       "src": "../../../node_modules/nuxoblivius/index.js",
       "file": "nuxoblivius.js",
-      "fileHash": "94d5dfea",
+      "fileHash": "93bca22b",
       "needsInterop": false
     }
   },

@@ -1,12 +1,12 @@
 # Record (Fetch)
 
 ::: tip 📃 Старая статья
-Можено глянуть старую статью [тут "Records"](/release/records) 
+Доступна к прочтению [старая статья](/release/records) 
 :::
 
-В Nuxoblivius-е есть свой Fetch клиент, для запросов. Он унифицирует и улучшает, опыт программирования.
+В Nuxoblivius-е есть свой Fetch клиент, для запросов. Он унифицирует и улучшает опыт программирования.
 
-Создание Record (-а):
+Создание Record(-а):
 
 ::: code-group
 ```ts [Нативно]
@@ -112,7 +112,7 @@ testRecord.delete()
 После отправки мы получаем статический Response, но можно получить и реактивный Response
 
 ::: code-group
-```vue{10} [Без SSR]
+```vue{10} [CSR]
 <script setup lang="ts">
 import { Record } from 'nuxoblivius'
 

@@ -1,8 +1,8 @@
 # State Manager
 
-В Nuxoblivius-е есть свой state manager. Используются классы для создания state manager-а.
+Nuxoblivius предоставляет для работы свой state-manager. Используются классы для создания state manager-а.
 
-Простой реактивный state-manager
+Простой реактивный state-manager:
 
 ::: code-group
 ```ts [Singleton]
@@ -26,7 +26,7 @@ export default () => subStore(Counter)
 ```
 :::
 
-В файле vue
+Во vue-файле:
 
 ::: code-group
 ```vue [Singleton]
@@ -55,7 +55,7 @@ const Counter = useCounter()
 
 ## Расширяемость
 
-Можно расширять класс, двумя методами
+Класс можно расширить двумя способами:
 
 ::: code-group
 ```ts [ООП]
@@ -98,10 +98,10 @@ export default defineStore(Article)
 ## Инкапсуляция
 
 ::: info Важно
-Доступно только для примитивных объектов. Строка, число, булевое, массив, объект
+Доступно только для примитивных объектов (строка, число, булевое, массив, объект)
 :::
 
-Есть возможность удобно сделать инкапсуляцию данных
+Есть возможность удобно инкапсулировать данные:
 
 ::: code-group
 ```ts [Нативно]
@@ -129,9 +129,9 @@ export default defineStore(Info)
 ```
 :::
 
-## Кастомный сеттер
+## Кастомный setter
 
-Можно сделать для свойства кастомный сеттер
+Можно сделать кастомный setter свойства:
 
 ::: code-group
 ```ts [Нативно]
@@ -169,10 +169,10 @@ console.log(Date.message) // "01.01.2024, 00:00:00"
 ## Референсы (.ref)
 
 ::: info Важно
-Референсы ещё будут дорабатыватся
+Референсы будут дорабатываться
 :::
 
-State manager создаёт ref аттрибут для возможности работы с свойствами стора
+State-manager создаёт ref-аттрибут для возможности работы с свойствами стора:
 
 ```ts
 import { defineStore } from 'nuxoblivius'
@@ -184,7 +184,7 @@ class TestStore {
 export default defineStore(TestStore)
 ```
 
-В другом файле
+В другом файле:
 
 ```ts
 import TestStore from './store/TestStore'
@@ -203,7 +203,7 @@ TestStore.counter++
 
 ## ⚡ Event: Создан
 
-После сборки `defineStore` или `subStore` вызывается эвент `mounted`
+После сборки методами `defineStore` или `subStore` вызывается событие `mounted`. В соответствующей функции можно произвести желаемые действия:
 
 ```ts
 import { defineStore } from 'nuxoblivius'
