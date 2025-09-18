@@ -3,14 +3,17 @@
 `Record` (запись) - fetch-клиент, предлагающий множество полезных функций и свойств для удобства работы с данными.
 
 ## Определение
+
 `Record` определяется функцией `new('path-to-api', init)`:
 
 ::: code-group
-```ts [Нативно]
-import { Record } from 'nuxoblivius'
 
-const testRecord = Record.new<IResponseType>('/api/test')
+```ts [Нативно]
+import { Record } from "nuxoblivius";
+
+const testRecord = Record.new<IResponseType>("/api/test");
 ```
+
 ```ts{4} [В State Manager (-е)]
 import { defineStore, Record } from 'nuxoblivius'
 
@@ -20,6 +23,7 @@ class Test {
 
 export default defineStore(Test)
 ```
+
 ```ts{5} [В Pinia🍍]
 import { defineStore } from 'pinia'
 import { Record } from 'nuxoblivius'
@@ -30,6 +34,7 @@ export default defineStore('test', () => {
     return { test }
 })
 ```
+
 :::
 , принимающей 1-м аргументом путь к api; 2-м аргументом (по желанию) - значение для инициализации (по умолчанию - null).
 
@@ -41,6 +46,7 @@ export default defineStore('test', () => {
 Все 4 функции возвращают Promise со значением с API. Отметим сразу, что данное возвращаемое значение не будет реактивным. Реактивное значение доступно из [ref](/release/state-manager.html#референсы-ref), либо из свойства [response](/release/record.html#реактивныи-response).
 
 ::: code-group
+
 ```ts{5} [GET]
 import { Record } from 'nuxoblivius'
 
@@ -55,9 +61,10 @@ record.get(1) // с аргументом
 record.get('1') // с аргументом
 
 // метод может принимать аргумент id (число),
-// которое отработает как: pathParam('id', ваше значение) 
+// которое отработает как: pathParam('id', ваше значение)
 // Если не выставить значение, pathParam будет стёрт.
 ```
+
 ```ts{5} [POST]
 import { Record } from 'nuxoblivius'
 
@@ -76,6 +83,7 @@ const formData = new FormData()
 formData.append('my', 'formData')
 record.post(formData)
 ```
+
 ```ts{5} [PUT]
 import { Record } from 'nuxoblivius'
 
@@ -94,6 +102,7 @@ const formData = new FormData()
 formData.append('my', 'formData')
 record.put(formData)
 ```
+
 ```ts{5} [PATCH]
 import { Record } from 'nuxoblivius'
 
@@ -112,6 +121,7 @@ const formData = new FormData()
 formData.append('my', 'formData')
 record.patch(formData)
 ```
+
 ```ts{5} [DELETE]
 import { Record } from 'nuxoblivius'
 
@@ -126,9 +136,10 @@ record.delete(1) // с аргументом
 record.delete('1') // с аргументом
 
 // метод может принимать аргумент id (число),
-// которое отработает как: pathParam('id', ваше значение) 
+// которое отработает как: pathParam('id', ваше значение)
 // Если не выставить значение, pathParam будет стёрт.
 ```
+
 :::
 
 ## Реактивный Response
@@ -136,6 +147,7 @@ record.delete('1') // с аргументом
 Реактивный Response (последнее полученное с api значение) всегда доступен к прочтению:
 
 ::: code-group
+
 ```vue{10} [CSR]
 <script setup lang="ts">
 import { Record } from 'nuxoblivius'
@@ -149,6 +161,7 @@ posts.get()
     <pre> {{ posts.response }} </pre>
 </template>
 ```
+
 ```vue{11} [SSR]
 <script setup lang="ts">
 import { Record } from 'nuxoblivius'
@@ -163,6 +176,7 @@ await posts.get()
     <pre> {{ posts.response }} </pre>
 </template>
 ```
+
 ```vue{15} [Lazy SSR]
 <script setup lang="ts">
 import { Record, useLazySpread } from 'nuxoblivius'
@@ -174,13 +188,14 @@ const posts = Record.new<IResponseType>('/api/posts')
 // несколько запросов без задержек
 await useLazySpread([
     () => posts.get()
-]) 
+])
 </script>
 <template>
     <!-- Реактивный Response, SSR-friendly: -->
     <pre> {{ posts.response }} </pre>
 </template>
 ```
+
 :::
 
 ## Обработка ошибок
@@ -188,12 +203,14 @@ await useLazySpread([
 Доступен инструментарий для обработки ошибок:
 
 ::: code-group
+
 ```ts{7-10} [Через свойство]
 myStore.record.get()
 
 if(myStore.record.error) // true или false
     console.log('Что-то пошло не так: ', myStore.record.errorText) // текст ошибки
 ```
+
 ```ts{4} [Через функцию]
 // User.ts
 
@@ -208,10 +225,12 @@ class User {
 
 export default defineStore<User>(User)
 ```
+
 :::
 В функции `onFailure`:
-* `reason` - объект, состоящий из двух ключей: `text` (содержащий errorText запроса) и `code` (код ошибки).
-* `retry` - функция запроса, вызвавшего ошибку. При желании можно осуществить этот запрос заново.
+
+- `reason` - объект, состоящий из двух ключей: `text` (содержащий errorText запроса) и `code` (код ошибки).
+- `retry` - функция запроса, вызвавшего ошибку. При желании можно осуществить этот запрос заново.
 
 Функцию для обработки ошибок можно определить и [глобально](/release/global-functions.html#onrecordfetchfailed) для всех запросов каждого Record-а.
 
@@ -240,16 +259,16 @@ posts.get()
 Доступны к прочтению заголовки ответа:
 
 ```ts
-import { Record } from 'nuxoblivius'
+import { Record } from "nuxoblivius";
 
-const posts = Record.new<IResponseType>('/api/posts')
+const posts = Record.new<IResponseType>("/api/posts");
 
-await posts.get()
+await posts.get();
 
 console.log(
-    // Response headers
-    posts.headers.get('Content-Type')
-)
+  // Response headers
+  posts.headers.get("Content-Type"),
+);
 // application/json
 ```
 
@@ -264,25 +283,24 @@ Recod предоставляет многофункциональный builder 
 ```ts {11-18}
 // UserInfo.ts
 
-import {defineStore, Record} from 'nuxoblivius'
+import { defineStore, Record } from "nuxoblivius";
 
-let myParam = 0
+let myParam = 0;
 
 class UserInfo {
-    public myValue: number = 0
+  public myValue: number = 0;
 
-    public getUserInfo = Record.new<IUserInfo>('/api/user/info')
-        .query({
-            param: 'value', // статические параметры
-            group: {
-                param: 'value'
-            },
-            reactiveParam: this.ref.myValue, // динамический параметр, будет изменяться при изменении myValue
-            reactiveParamAlt: () => myParam // также динамический параметр, но записанный иначе
-        })
+  public getUserInfo = Record.new<IUserInfo>("/api/user/info").query({
+    param: "value", // статические параметры
+    group: {
+      param: "value",
+    },
+    reactiveParam: this.ref.myValue, // динамический параметр, будет изменяться при изменении myValue
+    reactiveParamAlt: () => myParam, // также динамический параметр, но записанный иначе
+  });
 }
 
-export default defineStore<UserInfo>(UserInfo)
+export default defineStore<UserInfo>(UserInfo);
 ```
 
 Параметры могут быть как статическими, так и динамическими.
@@ -291,17 +309,17 @@ export default defineStore<UserInfo>(UserInfo)
 Также возможность 'запечь' некоторые значения: их можно будет перезаписать, но невозможно будет удалить:
 
 ```ts
-const posts = Record.new<IResponseType>('/api/posts')
-    .query({ name: 'Post number 1' }) // [!code --]
-    .query({ name: 'Post number 1' }, true) // [!code ++] Запекаем
+const posts = Record.new<IResponseType>("/api/posts")
+  .query({ name: "Post number 1" }) // [!code --]
+  .query({ name: "Post number 1" }, true); // [!code ++] Запекаем
 
 // Result: /api/posts?name=Post number 1
 
-posts.query({ name: "Other" })
+posts.query({ name: "Other" });
 
 // Result: /api/posts?name=Other
 
-posts.clearDynamicQuery()
+posts.clearDynamicQuery();
 
 // Result: /api/posts?name=Post number 1
 ```
@@ -313,22 +331,22 @@ posts.clearDynamicQuery()
 ```ts {12}
 // UserInfo.ts
 
-import {defineStore, Record} from 'nuxoblivius'
+import { defineStore, Record } from "nuxoblivius";
 
 // при каждом изменении значения myValue запрос будет осуществляться заново
-let myParam = ref(myValue)
+let myParam = ref(myValue);
 
-Record.new<IUserInfo>('/api/user/info')
-    .query({
-        'my-param': () => myParam.value
-    })
-    .reloadBy(myParam)
+Record.new<IUserInfo>("/api/user/info")
+  .query({
+    "my-param": () => myParam.value,
+  })
+  .reloadBy(myParam);
 ```
 
 Есть функция для очистки query-параметров `Record`-а:
 
 ```ts
-myRecordObject.clearDynamicQuery() // удаляет всё, кроме запечённых значений
+myRecordObject.clearDynamicQuery(); // удаляет всё, кроме запечённых значений
 ```
 
 Можно передать все пары "ключ-значение" из Sub Stor-а в качестве query-параметров: [Query-параметры из Sub Store](/release/sub-store.html#query-параметры-из-sub-store)
@@ -366,26 +384,26 @@ myRecordObject.clearDynamicQuery() // удаляет всё, кроме запе
 
 ```vue
 <script setup lang="ts">
-import { Record } from 'nuxoblivius'
-import { ref } from 'vue'
+import { Record } from "nuxoblivius";
+import { ref } from "vue";
 
-const q = ref('')
+const q = ref("");
 
-const posts = Record.new<IResponseType>('https://dummyjson.com/posts/search')
-    .oneRequestAtTime()
-    .query({ q, limit: 3 })
-    .reloadBy(q)
+const posts = Record.new<IResponseType>("https://dummyjson.com/posts/search")
+  .oneRequestAtTime()
+  .query({ q, limit: 3 })
+  .reloadBy(q);
 
-posts.get()
+posts.get();
 </script>
 <template>
-    <SearchToolbar v-model="q"/>
-    <section :class="['list', posts.loading && 'list-loading']">
-        <article clas="article" v-for="post in posts.response">
-            <div class="title"> {{ post.title }} </div>
-            <div class="body">  {{ post.body }} </div>
-        </article>
-    </section>
+  <SearchToolbar v-model="q" />
+  <section :class="['list', posts.loading && 'list-loading']">
+    <article clas="article" v-for="post in posts.response">
+      <div class="title">{{ post.title }}</div>
+      <div class="body">{{ post.body }}</div>
+    </article>
+  </section>
 </template>
 ```
 
@@ -397,35 +415,44 @@ posts.get()
 `Record` поддерживает путь к api вида `/api/user/get/{id}`
 
 Пример:
+
 ```ts {9,12,15}
 // UserInfo.ts
 
-import {defineStore, Record} from 'nuxoblivius'
+import { defineStore, Record } from "nuxoblivius";
 
 class User {
-    public idUser: number = 0
+  public idUser: number = 0;
 
-    public getUserById = Record.new<IUser>('/api/user/get/{id}')
-        .pathParam('id', this.idUser) // в качестве id к ссылке будет дописан this.ref.idUser
+  public getUserById = Record.new<IUser>("/api/user/get/{id}").pathParam(
+    "id",
+    this.idUser,
+  ); // в качестве id к ссылке будет дописан this.ref.idUser
 
-    public getUserById = Record.new<IUser>('/api/user/get/{id}')
-        .pathParam('id', this.ref.idUser) // динамическое значение
+  public getUserById = Record.new<IUser>("/api/user/get/{id}").pathParam(
+    "id",
+    this.ref.idUser,
+  ); // динамическое значение
 
-    public getUserBySlug = Record.new<IUser>('/api/user/get/{slug}')
-        .pathParam('slug', null) // если прокинут null - значение не дописывается
+  public getUserBySlug = Record.new<IUser>("/api/user/get/{slug}").pathParam(
+    "slug",
+    null,
+  ); // если прокинут null - значение не дописывается
 }
 
-export default defineStore<User>(User)
+export default defineStore<User>(User);
 ```
+
 Можно "прокинуть" параметр и при использовании в рамках одной компоненты:
 
 ```ts
-User.getUser.pathParam("slug", 'ivan').get()
+User.getUser.pathParam("slug", "ivan").get();
 ```
 
 Также доступен объект `params`, содержащий текущие параметры (`path` и `query`):
+
 ```ts
-console.log(User.params.path.slug) // 'ivan'
+console.log(User.params.path.slug); // 'ivan'
 ```
 
 ### Body Request
@@ -453,25 +480,32 @@ export default defineStore<User>(User)
 `Record` позволяет прописывать к запросам заголовки:
 
 Пример:
+
 ```ts {9,12,15}
 // UserInfo.ts
 
-import {defineStore, Record} from 'nuxoblivius'
+import { defineStore, Record } from "nuxoblivius";
 
 class User {
-    public contentType: string = 'application/json'
+  public contentType: string = "application/json";
 
-    public getUser = Record.new<IUser>('/api/user/get/{id}')
-        .header('Content-Type', 'application/json')
+  public getUser = Record.new<IUser>("/api/user/get/{id}").header(
+    "Content-Type",
+    "application/json",
+  );
 
-    public getUserDynamic = Record.new<IUser>('/api/user/get/{id}')
-        .header('Content-Type', this.ref.contentType) // динамический параметр
-    // или:
-    public getUserDynamic = Record.new<IUser>('/api/user/get/{id}')
-        .header('Content-Type', () => this.contentType) // динамический параметр
+  public getUserDynamic = Record.new<IUser>("/api/user/get/{id}").header(
+    "Content-Type",
+    this.ref.contentType,
+  ); // динамический параметр
+  // или:
+  public getUserDynamic = Record.new<IUser>("/api/user/get/{id}").header(
+    "Content-Type",
+    () => this.contentType,
+  ); // динамический параметр
 }
 
-export default defineStore<User>(User)
+export default defineStore<User>(User);
 ```
 
 ### Blob Response
@@ -479,17 +513,16 @@ export default defineStore<User>(User)
 Доступна функция `isBlob()` для работы с Blob-ами, получаемыми с API:
 
 Пример использования:
+
 ```ts {3}
 // определяем record:
-const record = Record.new<Blob>('url-to-get-blob')
-    .isBlob(true)
-    .defineProtocol('total', 0)
-    .onFailure(Auth.failureHandle())
+const record = Record.new<Blob>("url-to-get-blob")
+  .isBlob(true)
+  .defineProtocol("total", 0)
+  .onFailure(Auth.failureHandle());
 
 // используем его и получаем данные:
-const result = await record
-    .query(queryOfRequest)
-    .get()
+const result = await record.query(queryOfRequest).get();
 
 console.log(result); // на выходе - Blob
 ```
@@ -538,18 +571,20 @@ class User {
 
 export default defineStore<User>(User)
 ```
+
 `Record` предоставляет объект `pagination`, содержащий ряд функций и свойств:
-* `setup(path:id|query:page)` - инициализация пагинации. В аргументе ожидается строка:
-    + либо `query:${page}`, если переключение между страницами осуществляется по изменениям query-параметра. После двоеточия - название query-параметра.
-    + либо `path:${id}`, если переключение осуществляется по изменениям [path-параметра](/release/record.html#path-параметры) (после `/` ). После двоеточия - название path-параметра.
-* `current` - текущая страница пагинации
-* `lastPage` - номер последней страницы (определяется из meta-данных ответов через параметр `pageCount` в настройках [template](/release/records-caching.html))
-* `isLastPage` - является ли текущая страница последней (true/false)
-* `autoReload()` - автоматическая подгрузка новых данных при изменении номера страницы. Если не объявить - автоподгрузку нужно будет осуществлять вручную (например, используя [reloadBy](/release/record.html#reloadby)).
-* `next()` - увеличение текущей страницы на 1 (если текущая страница не является последней)
-* `prev()` - уменьшение текущей страницы на 1 (если текущая страница не является первой)
-* `toFirst()` - перемещение к первой странице
-* `toLast()` - перемещение к последней странице
+
+- `setup(path:id|query:page)` - инициализация пагинации. В аргументе ожидается строка:
+  - либо `query:${page}`, если переключение между страницами осуществляется по изменениям query-параметра. После двоеточия - название query-параметра.
+  - либо `path:${id}`, если переключение осуществляется по изменениям [path-параметра](/release/record.html#path-параметры) (после `/` ). После двоеточия - название path-параметра.
+- `current` - текущая страница пагинации
+- `lastPage` - номер последней страницы (определяется из meta-данных ответов через параметр `pageCount` в настройках [template](/release/records-caching.html))
+- `isLastPage` - является ли текущая страница последней (true/false)
+- `autoReload()` - автоматическая подгрузка новых данных при изменении номера страницы. Если не объявить - автоподгрузку нужно будет осуществлять вручную (например, используя [reloadBy](/release/record.html#reloadby)).
+- `next()` - увеличение текущей страницы на 1 (если текущая страница не является последней)
+- `prev()` - уменьшение текущей страницы на 1 (если текущая страница не является первой)
+- `toFirst()` - перемещение к первой странице
+- `toLast()` - перемещение к последней странице
 
 Если в response необходимо суммировать (а не перезаписывать) страницы - можно использовать функцию [appendsResponse](/release/record.html#appendsresponse) над `Record`.
 
@@ -602,45 +637,50 @@ export default defineStore<User>(User)
 
 ```vue
 <script setup lang="ts">
-import { Record } from 'nuxoblivius'
-import { useCached } from 'nuxoblivius/presets'
+import { Record } from "nuxoblivius";
+import { useCached } from "nuxoblivius/presets";
 
-const posts = Record.new<IResponseType>('https://dummyjson.com/posts')
-    // Пагинация
-    .pagination.setup('query:page')
-    .pagination.autoReload()
-    .template(raw => ({ data: raw.posts, pageCount: raw.total }))
-    .query({ limit: 3 })
-    // Кэширование
-    .preset(useCached(['query:page']))
+const posts = Record.new<IResponseType>("https://dummyjson.com/posts")
+  // Пагинация
+  .pagination.setup("query:page")
+  .pagination.autoReload()
+  .template((raw) => ({ data: raw.posts, pageCount: raw.total }))
+  .query({ limit: 3 })
+  // Кэширование
+  .preset(useCached(["query:page"]));
 
-posts.get()
+posts.get();
 </script>
 <template>
-    <section :class="['list', posts.loading && 'loading']">
-        <Article v-for="post in posts.response" :post="post" />
-    </section>
-    <section :class="['pagination', posts.loading && 'loading']">
-        <UXButton
-            v-show="posts.pagination.current != 1"
-            caption="Первая стр."
-            @click="posts.pagination.prev()"/>
-        <UXButton
-            v-show="posts.pagination.current != 1"
-            caption="Пред."
-            @click="posts.pagination.prev()"/>
-        <UXButton
-            v-show="!posts.pagination.isLastPage"
-            caption="След."
-            @click="posts.pagination.next()"/>
-        <UXButton
-            v-show="!posts.pagination.isLastPage"
-            caption="Посл. стр."
-            @click="posts.pagination.toLast()"/>
-        <PagInfo 
-            :current="posts.pagination.current"
-            :count="posts.pagination.lastPage"/>
-    </section>
+  <section :class="['list', posts.loading && 'loading']">
+    <Article v-for="post in posts.response" :post="post" />
+  </section>
+  <section :class="['pagination', posts.loading && 'loading']">
+    <UXButton
+      v-show="posts.pagination.current != 1"
+      caption="Первая стр."
+      @click="posts.pagination.prev()"
+    />
+    <UXButton
+      v-show="posts.pagination.current != 1"
+      caption="Пред."
+      @click="posts.pagination.prev()"
+    />
+    <UXButton
+      v-show="!posts.pagination.isLastPage"
+      caption="След."
+      @click="posts.pagination.next()"
+    />
+    <UXButton
+      v-show="!posts.pagination.isLastPage"
+      caption="Посл. стр."
+      @click="posts.pagination.toLast()"
+    />
+    <PagInfo
+      :current="posts.pagination.current"
+      :count="posts.pagination.lastPage"
+    />
+  </section>
 </template>
 ```
 
@@ -683,7 +723,8 @@ class User {
 
 export default defineStore<User>(User)
 ```
-* `result` - ответ с api.
+
+- `result` - ответ с api.
 
 ### then
 
@@ -692,8 +733,12 @@ export default defineStore<User>(User)
 После функций, возвращающих Promise, можно использовать и стандартный `then` из JavaScript, однако предоставляемую `Record`-ом функцию можно использовать и в таких случаях, как:
 
 ```ts
-record.pagination.next().then(_ => {console.log('Подгрузили следующую страницу')}) // после функций пагинации
-record.clearResponse().then(_ => {console.log('Response был очищен')}) // после функции очистки Respons-а
+record.pagination.next().then((_) => {
+  console.log("Подгрузили следующую страницу");
+}); // после функций пагинации
+record.clearResponse().then((_) => {
+  console.log("Response был очищен");
+}); // после функции очистки Respons-а
 ```
 
 ### onlyOnEmpty
@@ -712,9 +757,11 @@ class User {
 
 export default defineStore<User>(User)
 ```
+
 Или:
+
 ```ts
-User.users.onlyOnEmpty().get() // использование опции в рамках только одного компонента
+User.users.onlyOnEmpty().get(); // использование опции в рамках только одного компонента
 ```
 
 Функция проигнорируется при активной пагинации (чтобы не препятствовать получению новых страничек).
@@ -751,7 +798,7 @@ class User {
 
     // динамический параметр
     public token: string = 'mkj#jgkdfgm*ew'
-    
+
     public getUserDynamic = Record.new<IUser>('/api/user/get/{id}')
         .auth(Record.Bearer(() => this.token))
         // или:
@@ -785,7 +832,9 @@ public item = Record.new<ICabinet>('/api/item/{id}', {})
         }
     )
 ```
+
 Подытоживая - `borrowFrom` принимает в аргументе 3 функции:
+
 1. Функция-условие, при каких path-параметрах осуществлять взятие
 2. Функция-возврат массива, из которого берём данные (который может быть и вне какого-либо `Record`-а)
 3. Функция, содержащая условие для взятия данных из массива (например, при совпадении id)
@@ -814,10 +863,12 @@ export default defineStore<User>(User)
 ## swapMethod
 
 Функция, с помощью которой можно указать, каким образом будут "перезаписываться" данные в `Response` при повторных запросах (например, при изменениях path-param, либо при пагинации):
-* `hot` (по умолчанию): только после завершения подгрузки новых данных
-* `greedy`: при запуске нового запроса response очищается; по завершению - перезаписывается.
+
+- `hot` (по умолчанию): только после завершения подгрузки новых данных
+- `greedy`: при запуске нового запроса response очищается; по завершению - перезаписывается.
 
 Пример использования:
+
 ```ts{7}
 // User.ts
 
@@ -834,37 +885,40 @@ export default defineStore<User>(User)
 ## Кэширование запросов <Badge type="tip" text="Работает только на клиенте" />
 
 ::: warning ⚠ Кэширование постоянно дорабатывается
+
  
 :::
 
 Для запросов есть возможность кэширования на клиенте. Для этого создаются метки, по которым будет производиться кэширование:
 
 ```ts
-const posts = Record.new<IResponseType>('/api/posts')
-    // Будем сохранять запрос по Search параметру page
-    // Метка 'full' обозначает сохранять все запросы, а не последний
-    .createTag('query:page', 'full')
+const posts = Record.new<IResponseType>("/api/posts")
+  // Будем сохранять запрос по Search параметру page
+  // Метка 'full' обозначает сохранять все запросы, а не последний
+  .createTag("query:page", "full");
 ```
 
 Пример:
 
 ```ts
 // Делаем запрос
-await posts.query({ page: 1 }).get()
+await posts.query({ page: 1 }).get();
 
 // Теперь мы можем достать этот запрос
-posts.cached({ page: 1 })
+posts.cached({ page: 1 });
 ```
+
 Метод `cached` работает по принципу поиска значения по тэгам. Давайте рассмотрим, как ещё можно сформировать запрос на получение кэшированых данных:
+
 ```ts
 // Достать Response если: page == 1
-posts.cached({ page: 1 })
+posts.cached({ page: 1 });
 // Достать Response если: page != null
-posts.cached({ page: '*' })
+posts.cached({ page: "*" });
 // Достать Response если: page == null
-posts.cached({ page: null })
+posts.cached({ page: null });
 // Достать Response если: page != (пред. результат) page
-posts.cached({ page: '<>' })
+posts.cached({ page: "<>" });
 ```
 
 ### Preset: useCached
@@ -885,14 +939,15 @@ const posts = Record.new<IResponseType>('/api/posts')
 `useCached` заменяет собой такую структуру:
 
 ```ts
-const posts = Record.new<IResponseType>('/api/posts')
-    .preset(useCached(['query:page'])) // [!code ++]
-    .createTag('query:page', 'full') // [!code --]
-    .rule({ 'page': '*' }, $ => { // [!code --]
-        $.onlyOnEmpty().response = // [!code --]
-            $.cached({ 'page': posts.params.query }) // [!code --]
-            ?? $.onlyOnEmpty(false).response // [!code --]
-    }) // [!code --]
+const posts = Record.new<IResponseType>("/api/posts")
+  .preset(useCached(["query:page"])) // [!code ++]
+  .createTag("query:page", "full") // [!code --]
+  .rule({ page: "*" }, ($) => {
+    // [!code --]
+    $.onlyOnEmpty().response = // [!code --]
+      $.cached({ page: posts.params.query }) ?? // [!code --]
+      $.onlyOnEmpty(false).response; // [!code --]
+  }); // [!code --]
 ```
 
 [(Кэширование + Пагинация) демо](/release/record.md#пагинация-демо-кэширование)

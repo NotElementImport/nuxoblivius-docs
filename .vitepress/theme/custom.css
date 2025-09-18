@@ -7,7 +7,7 @@
   --vp-c-brand-1: light-dark(#34843c, #78be7e);
   --vp-badge-tip-bg: #34843220;
 
-  --vp-layout-max-width: calc(1210px + 64px);
+  --vp-layout-max-width: calc(1230px + 64px);
 }
 
 h3 .VPBadge,

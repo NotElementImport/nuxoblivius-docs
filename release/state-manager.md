@@ -1,225 +1,297 @@
 # State Manager
 
-Nuxoblivius предоставляет для работы свой state-manager. Используются классы для создания state manager-а.
+**Nuxoblivius** включает встроенный _State Manager_, обеспечивающий удобное управление состоянием приложения.
 
-Простой реактивный state-manager:
+Основой являются классы, что позволяет строить гибкую и расширяемую архитектуру, а также легко интегрировать собственные механизмы работы с данными.
 
-::: code-group
-```ts [Singleton]
-import { defineStore } from 'nuxoblivius'
+## Создание _Store_ объекта
 
-class Counter {
-    public value: number = 0
-}
+**Nuxoblivius** поддерживает два подхода к созданию _Store_:
 
-export default defineStore(Counter)
-```
+- **[`Singleton`](https://refactoring.guru/ru/design-patterns/singleton)** — единый экземпляр состояния, доступный во всём приложении.
 
-```ts [Factory]
-import { subStore } from 'nuxoblivius'
+- **[`Factory`](https://refactoring.guru/ru/design-patterns/factory-method)** — генерация новых экземпляров _Store_ при каждом вызове.
 
-class Counter {
-    public value: number = 0
-}
+### Как работает создание _Store_:
 
-export default () => subStore(Counter)
-```
-:::
+— Все свойства класса, кроме начинающихся с `_`, автоматически становятся **реактивными**.\
+— _Store_ реализован на базе классов, поэтому вы можете использовать все привычные возможности _ООП_: **наследование**, **инкапсуляцию**, **полиморфизм**.
 
-Во vue-файле:
+### Factory (через `subStore`):
+
+Более безопасный вариант, при котором _Store_ создаётся в контексте конкретного компонента.
+
+> — Такой _Store_ изолирован и уничтожается вместе с компонентом; \
+> — Поддерживает хуки жизненного цикла ([`onMounted`](https://vuejs.org/api/composition-api-lifecycle.html#onmounted), [`onUnmounted`](https://vuejs.org/api/composition-api-lifecycle.html#onunmounted)) во **Vue 3**; \
+> — Удобен для локального состояния, которое не должно «_утекать_» за пределы компонента;
 
 ::: code-group
-```vue [Singleton]
+
+```ts [Бизнес логика] {15}
+import { subStore } from "nuxoblivius";
+
+class Counter {
+  private value: number = 0;
+
+  public getValue(): number {
+    return this.value;
+  }
+
+  public increase(): void {
+    this.value += 1;
+  }
+}
+
+export default () => subStore(Counter);
+```
+
+```vue [Отображение]
 <script setup lang="ts">
-import Counter from './store/Counter'
+import useCounter from "@/store/Counter";
+
+const counter = useCounter();
 </script>
 <template>
-    <button @click="Counter.value++">
-        {{ Counter.value }}
-    </button>
+  <button @click="counter.increase()">Counter: {{ counter.getValue() }}</button>
 </template>
 ```
 
-```vue [Factory]
+:::
+
+### Singleton (через `defineStore`):
+
+**Singleton** используется тогда, когда нужно иметь единый источник правды во всём приложении.
+_Store_, созданный через `defineStore`, существует в одном экземпляре и доступен из любой части кода.
+
+_Зачем это нужно_:
+
+> — хранение **глобального состояния**, которое должно быть одинаковым для всех компонентов; \
+> — управление _настройками приложения_ (**тема**, **язык**, **конфигурация**); \
+> — хранение _данных пользователя_ (**сессия**, **токен**, **профиль**); \
+> — кэширование или другие данные, которые не должны пересоздаваться при каждом обращении;
+
+::: code-group
+
+```ts [Бизнес логика] {15}
+import { defineStore } from "nuxoblivius";
+
+class Counter {
+  private value: number = 0;
+
+  public getValue(): number {
+    return this.value;
+  }
+
+  public increase(): void {
+    this.value += 1;
+  }
+}
+
+export default defineStore(Counter);
+```
+
+```vue [Отображение]
 <script setup lang="ts">
-import useCounter from './store/Counter'
-const Counter = useCounter()
+import Counter from "@/store/Counter";
 </script>
 <template>
-    <button @click="Counter.value++">
-        {{ Counter.value }}
-    </button>
+  <button @click="Counter.increase()">Counter: {{ Counter.getValue() }}</button>
 </template>
 ```
+
 :::
 
-## Расширяемость
+## Инкапсуляция данных
 
-Класс можно расширить двумя способами:
+**Nuxoblivius** поддерживает разные подходы к инкапсуляции состояния:
+
+> — **Классический _ООП_-подход** — вы можете скрывать данные за приватными свойствами и методами;
+
+> — **Встроенные механизмы библиотеки** — **Nuxoblivius** позволяет ограничивать доступ к данным через специальные методы и правила реактивности, сохраняя при этом контроль над изменением состояния.
+
+Таким образом, можно сочетать привычные средства инкапсуляции из _ООП_ с возможностями, встроенными в сам фреймворк.
+
+### Классический подход (getter/setter):
+
+Классический подход строится через: _методы доступа_
 
 ::: code-group
-```ts [ООП]
-// Base.ts ----------------------------------
-export default class Base {
-    public lang: string = 'ru'
+
+```ts [Бизнес логика]
+import { subStore } from "nuxoblivius";
+
+class Language {
+  private currentLanguage: string;
+
+  public getCurrent(): string {
+    return this.currentLanguage;
+  }
+
+  public setCurrent(lang: string): void {
+    this.currentLanguage = lang;
+  }
 }
 
-// Articel.ts -------------------------------
-import Base from './store/Base'
-import { defineStore } from 'nuxoblivius'
-
-class Article extends Base {
-    public response: IArticle
-}
-
-export default defineStore(Article)
+export default () => subStore(Language);
 ```
 
-```ts [Компоновщик]
-// Lang.ts ----------------------------------
-export default class Lang {
-    public lang: string = 'ru'
-}
+```ts [Пример использования]
+import useLanguage from "@/store/Language";
 
-// Articel.ts -------------------------------
-import Lang from './store/Lang'
-import { defineStore, subStore } from 'nuxoblivius'
+const language = useLanguage();
 
-class Article {
-    public lang = subStore(Lang)
-
-    public response: IArticle
-}
-
-export default defineStore(Article)
+language.setCurrent("ru");
+language.getCurrent(); // ru
 ```
+
 :::
 
-## Инкапсуляция
+### Теневая переменная (Метод двойного свойства):
 
-::: info Важно
-Доступно только для примитивных объектов (строка, число, булевое, массив, объект)
+::: warning ⚠ Важно
+Доступно только для примитивных объектов (**строка**, **число**, **булевое**, **объект**)
 :::
 
-Есть возможность удобно инкапсулировать данные:
+В **Nuxoblivius** используется механизм теневых переменных, позволяющий отделять внутреннее состояние от публичного.
+
+> — Свойство с префиксом `_` считается внутренним — оно доступно только _внутри класса_ и не участвует в реактивности напрямую.
+
+> — Свойство без префикса создаётся как «_зеркало_» внутреннего и используется для внешнего доступа.
+
+Таким образом, данные хранятся безопасно внутри объекта, а снаружи доступны только через контролируемый интерфейс. Это сочетает привычную инкапсуляцию из _ООП_ с _реактивной моделью_ **Nuxoblivius**.
 
 ::: code-group
-```ts [Нативно]
-import { defineStore } from 'nuxoblivius'
+
+```ts [Бизнес логика]
+import { subStore } from "nuxoblivius";
 
 class Info {
-    private _message: string = '' //Доступ только из класса
-    readonly message: string      //Доступ вне класса только чтение
+  private _message: string; // Теневая перемменая, внутренняя
+  readonly message!: string; // Открытая наружная
+
+  public setMessage(newMessage: string): void {
+    this._message = newMessage;
+  }
 }
 
-export default defineStore(Info)
+export default () => subStore(Info);
 ```
 
-```ts [Альтернатива]
-import { defineStore } from 'nuxoblivius'
+```ts [Пример использования]
+import useInfo from "@/store/Info";
 
-class Info {
-    //Доступ только из класса
-    private $message: string = ''
-    // Доступ вне класса только чтение 
-    get message() { return this.$message }
-}
+const info = useInfo();
+info.setMessage("Hello world!");
 
-export default defineStore(Info)
+info.message; // Hello world!
 ```
+
 :::
 
-## Кастомный setter
+### Кастомный setter (Свойство которое может себя модернизировать)
 
-Можно сделать кастомный setter свойства:
+В **Nuxoblivius** используется механизм методы доступа теневых переменных, позволяющий отделять внутреннее состояние от публичного а так-же его кастомизировать.
+
+> — Свойство с префиксом `_` считается внутренним — оно доступно только _внутри класса_ и не участвует в реактивности напрямую.
+
+> — Свойство без префикса создаётся как «_зеркало_» внутреннего и используется для внешнего доступа. Оно является методом доступа `set` и позволяет модифицировать входные данные.
 
 ::: code-group
-```ts [Нативно]
-import { defineStore } from 'nuxoblivius'
 
-class Date {
-    private _message: string = ''
-        set message(v: Date) { this._message = v.toLocaleString() }
+```ts [Бизнес логика]
+import { subStore } from "nuxoblivius";
+
+class OTPValue {
+  private _value: string;
+  set value(value: unknown): void {
+    const valueAsString = `${value}`;
+
+    if (valueAsString.lenght > 8) {
+      this._value = valueAsString.slice(1, 8);
+      return;
+    }
+
+    this._value = valueAsString;
+  }
 }
 
-export default defineStore(Info)
+export default () => subStore(OTPValue);
 ```
-```ts [Альтернатива]
-import { defineStore } from 'nuxoblivius'
 
-class Date {
-    private $message: string = ''
-        set message(v: Date) { this.$message = v.toLocaleString() }
-        get message(v): string { return this.$message }
-}
+```ts [Пример использования]
+import useOTPValue from "@/store/OTPValue";
 
-export default defineStore(Info)
+const otp = useOTPValue();
+otp.value = "1020202";
+otp.value; // 020202
 ```
+
 :::
 
-В другом файле
-```ts
-import Date from './store/Date'
+## Низкоуровневый доступ (.ref)
 
-Date.message = new Date('2024-01-01');
+У любого _Store_ в **Nuxoblivius** есть специальное свойство `.ref`.
+Оно предоставляет низкоуровневый доступ к экземпляру класса, из которого был создан _Store_.
 
-console.log(Date.message) // "01.01.2024, 00:00:00"
-```
+Зачем это может быть нужно:
 
-## Референсы (.ref)
+> — Получение информации, о свойсве (**Название**, **Значение**);
 
-::: info Важно
-Референсы будут дорабатываться
-:::
+> — Подписать/Отписаться от изменений;
 
-State-manager создаёт ref-аттрибут для возможности работы с свойствами стора:
+::: code-group
 
-```ts
-import { defineStore } from 'nuxoblivius'
+```ts [Бизнес логика]
+import { subStore } from "nuxoblivius";
 
 class TestStore {
-    public counter: number = 0
+  public myVar: string;
 }
 
-export default defineStore(TestStore)
+export default () => subStore(TestStore);
 ```
 
-В другом файле:
+```ts [Пример использования]
+import useTestStore from "@/store/TestStore";
 
-```ts
-import TestStore from './store/TestStore'
+const testStore = useTestStore();
 
-// Получаем референс к свойству counter
-TestStore.ref.counter
+testStore.ref.myVar.name; // "myVar"
+testStore.ref.myVar.value; // undefined
 
-// Отслеживаем изменения у counter
-TestStore.ref.counter.watch(() => {
-    console.log('counter изменился')
-})
+testStore.myVar = "Hello!";
 
-TestStore.counter++
-// "counter изменился"
+testStore.ref.myVar.value; // "Hello!"
+
+const unWatchHandle = testStore.ref.myVar.watch(() => {
+  console.log("Value updated!");
+}, "some-key");
+
+testStore.ref.myVar.unwatch("some-key");
 ```
+
+:::
 
 ## ⚡ Event: Создан
 
 После сборки методами `defineStore` или `subStore` вызывается событие `mounted`. В соответствующей функции можно произвести желаемые действия:
 
 ```ts
-import { defineStore } from 'nuxoblivius'
+import { defineStore } from "nuxoblivius";
 
 class Test {
-    mounted() {
-        console.log('Я собран!')
-    }
+  mounted() {
+    console.log("Я собран!");
+  }
 }
 
-export default defineStore(Test)
+export default defineStore(Test);
 ```
 
 ## API
 
 ### `defineStore`
+
 ```ts
 interface Store<T> {
     ref: Record<keyof T, { value: any, watch(handle: Function): void }>
@@ -229,6 +301,7 @@ declare function defineStore<T extends any>(class: { new(): T }): T & Store<T>
 ```
 
 ### `subStore`
+
 ```ts
 interface Store<T> {
     ref: Record<keyof T, { value: any, watch(handle: Function): void }>
