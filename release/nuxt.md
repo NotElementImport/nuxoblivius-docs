@@ -22,16 +22,16 @@ export default defineNuxtConfig({
 
 Все параметры для `nuxoblivius`:
 
-##### - `logs: boolean` — включает серверные логи.
+##### `logs: boolean` — включает серверные логи.
 
 > При активации в консоли отображается ход выполнения запросов, что облегчает отладку и позволяет отслеживать работу объектов [`Record`](/release/record.html).
 
-##### - `clientLogs: boolean` - включает клиентские логи, в браузере. <Badge text="^1.7.x" />
+##### `clientLogs: boolean` <Badge text="^1.7.x" /> - включает клиентские логи, в браузере.
 
 > При активации в консоли браузера отображается процесс выполнения запросов. Это упрощает отладку и даёт возможность отслеживать работу объектов [`Record`](/release/record.html).  
 > Дополнительно, при включённом [SSR]() можно увидеть, был ли запрос выполнен **до гидрации** или уже **после неё**.
 
-##### - `rules: globalThis.Record<string, string>` - позволяет задать правила для [`Record`](/release/record.html) при SSR.
+##### `rules: globalThis.Record<string, string>` - позволяет задать правила для [`Record`](/release/record.html) при SSR.
 
 > С их помощью определённые запросы могут выполняться **напрямую** (по указанному адресу), минуя [NitroRouteRules](https://nuxt.com/docs/4.x/api/nuxt-config#routerules-1).
 >
