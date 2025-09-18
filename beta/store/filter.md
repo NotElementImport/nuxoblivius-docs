@@ -33,9 +33,9 @@ export default class FilterFilms extends Filter {
 В случае локальной фильтрации в классе фильтра необходимо создать функцию **resolve** (el: _Element_), по возвращаемому значению которой (_true_ / _false_) и будет определяться, "отсекается" элемент, или нет. Простейший пример:
 
 ```ts
-export default class FilterPostLocal extends Filter {
+export default class FilterFilmLocal extends Filter {
   protected static globalName = "FilterFilmsLocal";
-  protected resolve(el: IPostResponse) {
+  protected resolve(el: IFilmResponse) {
     return Boolean(el.nsfw == true); // Hide it
   }
 }
@@ -44,7 +44,7 @@ export default class FilterPostLocal extends Filter {
 Объект state-менеджера использует класс фильтра следующим образом:
 
 ```ts
-public schedules = state<IDoctorSchedule>([])
+public schedules = state<IFilmResponse>([])
 	.api("/api/films")
 	.template('my-template')
 	.filter(FilterPost.ref(), 'emit-always')
