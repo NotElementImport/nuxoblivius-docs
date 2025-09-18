@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress'
+import { h } from 'vue'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -12,6 +13,10 @@ export default defineConfig({
   head: [
     ['link', { rel: 'icon', href: '/nuxoblivius-docs/nuxoblivius.png', type: 'image/png' }]
   ],
+
+  markdown: {
+    lineNumbers: true,
+  },
 
   // locales: {
   //   root: {
@@ -39,7 +44,7 @@ export default defineConfig({
 
     sidebar: [
       {
-        text: '1.5.X',
+        text: '1.7.X',
         items: [
           // { text: 'Overview', link: '/release/overview' },
           {
@@ -64,7 +69,7 @@ export default defineConfig({
         ]
       },
       {
-        text: '0.5.4',
+        text: '0.5.4 (deprecated)',
         items: [
           { text: 'Setup', link: '/beta/setup' },
           {
