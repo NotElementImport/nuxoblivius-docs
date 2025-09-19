@@ -9,11 +9,11 @@ hero:
   tagline: Vue 3 and Nuxt 3
   actions:
     - theme: brand
-      text: "Docs"
+      text: "Документация"
       link: /release/setup
     - theme: alt
-      text: "API"
-      link: /beta/overview
+      text: "Гайды"
+      link: /release/guides/di
     # - theme: alt
     #   text: API Examples
     #   link: /examples/
@@ -30,7 +30,7 @@ features:
 <br>
 <br>
 
-# ⚙ Setup
+# Установка пакета
 
 Установить nuxoblivius изспользуя комманду
 
@@ -72,7 +72,6 @@ yarn add nuxoblivius@latest
 <br>
 <br>
 
-
 <script setup>
 import { VPTeamMembers } from 'vitepress/theme'
 
@@ -80,15 +79,16 @@ const members = [
   {
     avatar: 'https://avatars.githubusercontent.com/u/70256601?v=4',
     name: 'NotElementImport',
-    title: 'Идея, разработка',
+    title: 'Разработка, документация',
     links: [
       { icon: 'github', link: 'https://github.com/NotElementImport' },
+      { icon: 'linkedin', link: 'https://www.linkedin.com/in/kirill-panteleyev-4b487037b/' },
     ]
   },
   {
     avatar: 'https://avatars.githubusercontent.com/u/92153941?v=4',
     name: 'Perfect03',
-    title: 'Тестирование, документация',
+    title: 'Разработка, документация',
     links: [
       { icon: 'github', link: 'https://github.com/Perfect03' },
     ]
@@ -96,8 +96,8 @@ const members = [
 ]
 </script>
 
-# 🌐 Our Team
+# Наша команда
 
-Команда, которая разрабатывает
+Наша команда, которая разрабатывает данный пакет
 
 <VPTeamMembers size="small" :members="members" />

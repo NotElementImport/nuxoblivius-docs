@@ -1,24 +1,31 @@
-# Global Functions
+# Общие настройки
 
-## Templates <Badge type="info" text="^ 1.1.0" style='margin-top: 7px;'/>  
+::: tip В разработке
+
+Данный раздел всё ещё дорабатывается
+
+:::
+
+## Templates <Badge type="info" text="^ 1.1.0" style='margin-top: 7px;'/>
 
 Для избавления от рутинных действий при работе с API предусмотрены `template`-ы, задача которых - автоматическое переформатирование приходящих с API данных.
 
 Пример исходных данных:
+
 ```json
 {
-    "data": [
-        {
-            "id": 0,
-            "title": "Some Article",
-            "desc": "Test Description"
-        }
-    ],
-    "meta": {
-        "total_count": 56,
-        "current_page": 2,
-        "per_page": 3
+  "data": [
+    {
+      "id": 0,
+      "title": "Some Article",
+      "desc": "Test Description"
     }
+  ],
+  "meta": {
+    "total_count": 56,
+    "current_page": 2,
+    "per_page": 3
+  }
 }
 ```
 
@@ -27,29 +34,28 @@
 Можно написать template функцией `RegisterTemplate`:
 
 ```ts
-import {RegisterTemplate} from 'nuxoblivius'
+import { RegisterTemplate } from "nuxoblivius";
 
-RegisterTemplate('my-template', (raw: object) => {
-    if(raw.data) 
-        return {
-            data: raw.data,
-            pageCount: raw.meta?.total_count / raw.meta?.per_page ?? 1 // определяем количество страничек, чтобы знать, на каком моменте остановить пагинацию
-        }
-    else return raw
-})
+RegisterTemplate("my-template", (raw: object) => {
+  if (raw.data)
+    return {
+      data: raw.data,
+      pageCount: raw.meta?.total_count / raw.meta?.per_page ?? 1, // определяем количество страничек, чтобы знать, на каком моменте остановить пагинацию
+    };
+  else return raw;
+});
 ```
 
 , а затем использовать его при определении [Record](/release/records.html)-а:
 
 ```ts
-import {Record} from 'nuxoblivius'
+import { Record } from "nuxoblivius";
 
-const articles = Record.new<IArticle>('/api/articles')
-    .template('my-template')
+const articles = Record.new<IArticle>("/api/articles").template("my-template");
 
-await articles.get()
+await articles.get();
 
-console.log(articles.response)
+console.log(articles.response);
 /**
  * [
  *    {
@@ -82,7 +88,7 @@ await articles.get()
 import {RegisterTemplate, CallPattern} from 'nuxoblivius'
 
 RegisterTemplate(
-    'unpack-template', 
+    'unpack-template',
     (raw: object) => ({ data: raw.data })
 )
 
@@ -93,20 +99,21 @@ const { data: formatedData } = CallPattern('unpack-template', myData)
  * [{ message: 'message_1' } ...]
  */
 ```
+
 Функция `CallPattern` распаковывает данные из любого объекта согласно прописанному шаблону.
 
 Можно использовать `templat`-ы и цепочками:
 
 ```ts
 RegisterTemplate(
-    'unpack-template', 
+    'unpack-template',
     (raw: object) => ({ data: raw.data })
 )
 
 RegisterTemplate(
-    'format', 
-    (unpackTemplate: object) => ({ 
-        data: CallPattern('unpack-template', unpackTemplate).data.map(() => <some logic>) 
+    'format',
+    (unpackTemplate: object) => ({
+        data: CallPattern('unpack-template', unpackTemplate).data.map(() => <some logic>)
     })
 )
 
@@ -114,22 +121,20 @@ const { data: formatedData } = CallPattern('format', myData)
 ```
 
 ```ts
-RegisterTemplate('unpack-data-and-structing', (raw: IRawArticles) => {
-    // Calling another template
-    raw = CallPattern('unpack-data', raw)
+RegisterTemplate("unpack-data-and-structing", (raw: IRawArticles) => {
+  // Calling another template
+  raw = CallPattern("unpack-data", raw);
 
-    if(raw.data) {
-        // Adding checking for existence of Description 
-        raw.data = raw.data.map(
-            (value) => ({
-                ...value,
-                hadDescription: value.desc ? true : false
-            })
-        )
+  if (raw.data) {
+    // Adding checking for existence of Description
+    raw.data = raw.data.map((value) => ({
+      ...value,
+      hadDescription: value.desc ? true : false,
+    }));
 
-        return raw
-    }
-})
+    return raw;
+  }
+});
 ```
 
 ```ts
@@ -157,12 +162,12 @@ export default defineStore<Articles>(Articles)
 ```ts{5,6,7,10,14}
 const articles = Record.new<IArticle>('/api/articles')
     ...
-    .template((raw: object) => ({ 
+    .template((raw: object) => ({
         data: raw.data,
         protocol: {
             meta: raw.meta
             secondData: 'other data'
-        } 
+        }
     }))
     // Define protocol for reading data from template
     .defineProtocol<IMetaResponse>('meta', {} /* Default Value */)
@@ -188,6 +193,7 @@ console.log(articles.protocol.thirdData)
  * 'third'
  */
 ```
+
 Такие данные доступны не из объекта [response](/release/records.html#response), а из отдельного объекта protocol.
 
 ## setDefaultHeader
@@ -195,9 +201,9 @@ console.log(articles.protocol.thirdData)
 Доступна функция `setDefaultHeader`, которая, как понятно из названия, добавляет по умолчанию определенный заголовок при каждом запросе к API каждого `Record`-а:
 
 ```ts
-import { SetDefaultHeader } from 'nuxoblivius'
+import { SetDefaultHeader } from "nuxoblivius";
 
-SetDefaultHeader('Content-Type', "application/json")
+SetDefaultHeader("Content-Type", "application/json");
 ```
 
 ## setDefaultAuth
@@ -205,9 +211,9 @@ SetDefaultHeader('Content-Type', "application/json")
 Доступна функция `setDefaultAuth`, которая, аналогично предыдущей, добавляет по умолчанию заголовок `Authorization` с определенным значением при каждом запросе к API каждого `Record`-а:
 
 ```ts
-import { SetDefaultHeader } from 'nuxoblivius'
+import { SetDefaultHeader } from "nuxoblivius";
 
-SetDefaultAuth("Bearer |vmxzweqorekwfdsafmswqerqewrewhvhgl")
+SetDefaultAuth("Bearer |vmxzweqorekwfdsafmswqerqewrewhvhgl");
 ```
 
 ## onRecordFetchFailed
@@ -215,7 +221,9 @@ SetDefaultAuth("Bearer |vmxzweqorekwfdsafmswqerqewrewhvhgl")
 Доступна функция `onRecordFetchFailed`, принимающая в аргументе функцию и выполняющая её при любом запросе к API, завершившемся ошибкой:
 
 ```ts
-import { onRecordFetchFailed } from 'nuxoblivius'
+import { onRecordFetchFailed } from "nuxoblivius";
 
-onRecordFetchFailed(() => {console.log('Oops')})
+onRecordFetchFailed(() => {
+  console.log("Oops");
+});
 ```

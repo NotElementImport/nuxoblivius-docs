@@ -17,7 +17,7 @@
 — Все свойства класса, кроме начинающихся с `_`, автоматически становятся **реактивными**.\
 — _Store_ реализован на базе классов, поэтому вы можете использовать все привычные возможности _ООП_: **наследование**, **инкапсуляцию**, **полиморфизм**.
 
-### Factory (через `subStore`):
+### Factory (через `subStore`/`defineFactory`):
 
 Более безопасный вариант, при котором _Store_ создаётся в контексте конкретного компонента.
 
@@ -27,7 +27,7 @@
 
 ::: code-group
 
-```ts [Бизнес логика] {15}
+```ts [Бизнес логика (subStore)] {15}
 import { subStore } from "nuxoblivius";
 
 class Counter {
@@ -45,6 +45,24 @@ class Counter {
 export default () => subStore(Counter);
 ```
 
+```ts [Бизнес логика (defineFactory)] {15}
+import { defineFactory } from "nuxoblivius";
+
+class Counter {
+  private value: number = 0;
+
+  public getValue(): number {
+    return this.value;
+  }
+
+  public increase(): void {
+    this.value += 1;
+  }
+}
+
+export default defineFactory(Counter);
+```
+
 ```vue [Отображение]
 <script setup lang="ts">
 import useCounter from "@/store/Counter";
@@ -58,10 +76,10 @@ const counter = useCounter();
 
 :::
 
-### Singleton (через `defineStore`):
+### Singleton (через `defineStore` / `defineSingleton`):
 
 **Singleton** используется тогда, когда нужно иметь единый источник правды во всём приложении.
-_Store_, созданный через `defineStore`, существует в одном экземпляре и доступен из любой части кода.
+_Store_, созданный через `defineStore`/`defineSingleton`, существует в одном экземпляре и доступен из любой части кода.
 
 _Зачем это нужно_:
 
@@ -72,7 +90,7 @@ _Зачем это нужно_:
 
 ::: code-group
 
-```ts [Бизнес логика] {15}
+```ts [Бизнес логика (defineStore)] {15}
 import { defineStore } from "nuxoblivius";
 
 class Counter {
@@ -88,6 +106,24 @@ class Counter {
 }
 
 export default defineStore(Counter);
+```
+
+```ts [Бизнес логика (defineSingleton)] {15}
+import { defineSingleton } from "nuxoblivius";
+
+class Counter {
+  private value: number = 0;
+
+  public getValue(): number {
+    return this.value;
+  }
+
+  public increase(): void {
+    this.value += 1;
+  }
+}
+
+export default defineSingleton(Counter);
 ```
 
 ```vue [Отображение]
@@ -203,7 +239,7 @@ import { subStore } from "nuxoblivius";
 
 class OTPValue {
   private _value: string;
-  set value(value: unknown): void {
+  set value(value: unknown) {
     const valueAsString = `${value}`;
 
     if (valueAsString.lenght > 8) {
