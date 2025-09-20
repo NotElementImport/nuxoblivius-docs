@@ -70,7 +70,7 @@ export default defineConfig({
             text: 'Record (Запросы API)', link: '/release/record', items: [
               { text: 'Базовые настройки', link: `/release/record/base` },
               { text: 'Продвинутые настройки', link: `/release/record/advanced` },
-              { text: 'Модуль: Чтение Response', link: `/release/record/template` },
+              { text: 'Модуль: Трансформация', link: `/release/record/template` },
               { text: 'Модуль: Пагинация', link: `/release/record/pagination` },
               { text: 'Модуль: Взаимствование', link: `/release/record/borrow` },
               { text: 'Модуль: Кэширование', link: `/release/record/cache` },
@@ -82,6 +82,7 @@ export default defineConfig({
       {
         text: '1.7.x Гайды',
         items: [
+          { text: 'Работа с SSR', link: '/release/guides/ssr' },
           { text: 'Работа с DI', link: '/release/guides/di' },
           { text: 'Работа с JWT', link: '/release/guides/jwt' }
         ]
