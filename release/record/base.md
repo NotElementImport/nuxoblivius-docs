@@ -181,6 +181,26 @@ posts.onFinish((posts, meta) => {
 
 :::
 
+### Обработка ожидания ответа
+
+У каждого **Record** в **Nuxoblivius** есть _реактивное свойство_ `loading`, которое отражает текущее состояние запроса:
+
+> - `true` — запрос выполняется;
+
+> - `false` — запрос завершён (_успешно_ или с _ошибкой_).
+
+Это свойство удобно использовать для отображения _индикаторов загрузки_, _блокировки кнопок_ или любых других сценариев, где важно понимать, что _запрос ещё в процессе_.
+
+```ts {5}
+import { Record } from "nuxoblivius";
+
+const posts = Record.new("/api/posts", []);
+
+if (posts.loading) {
+  console.log("В процессе");
+}
+```
+
 ### Обработка ошибок
 
 В **Nuxoblivius** ошибки можно отлавливать как во _время выполнения запроса_, так и _после него_.
@@ -218,7 +238,7 @@ if (posts.error) {
 
 :::
 
-### Чтение Response Header
+### Чтение (Response Headers)
 
 В **Nuxoblivius** прочитать заголовки ответа, можно через свойство `headers`:
 
@@ -229,6 +249,18 @@ const posts = Record.new("/api/posts", []);
 
 // `headers` имеет тип Header
 posts.headers.get("Content-Type");
+```
+
+### Сброс тела ответа
+
+В **Record** можно одной коммандой `.clearResponse()`, выставить значение по умолчанию, для переменной `response`
+
+```ts {5}
+import { Record } from "nuxoblivius";
+
+const posts = Record.new("/api/posts", []);
+
+posts.clearResponse();
 ```
 
 ## Настройка Search Params (Query)
@@ -406,7 +438,7 @@ postId.value = 2;
 
 :::
 
-## Настройка Headers
+## Настройка (Request Headers)
 
 Для работы с заголовками в **Nuxoblivius** у объекта **Record** есть метод `.header()`.
 Он позволяет задавать или изменять значения _HTTP_-заголовков для запроса.
@@ -562,7 +594,7 @@ import { Record } from "nuxoblivius";
 
 const posts = Record.new("/api/posts", []);
 
-posts..onFailure(({ text, code, response }, retry) => {
+posts.onFailure(({ text, code, response }, retry) => {
   console.error("Ошибка:", text, "Код:", code);
   console.log("Ответ:", response);
 

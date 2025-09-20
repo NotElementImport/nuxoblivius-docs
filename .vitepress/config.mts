@@ -69,6 +69,7 @@ export default defineConfig({
           {
             text: 'Record (Запросы API)', link: '/release/record', items: [
               { text: 'Базовые настройки', link: `/release/record/base` },
+              { text: 'Продвинутые настройки', link: `/release/record/advanced` },
               { text: 'Модуль: Чтение Response', link: `/release/record/template` },
               { text: 'Модуль: Пагинация', link: `/release/record/pagination` },
               { text: 'Модуль: Взаимствование', link: `/release/record/borrow` },
