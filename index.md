@@ -13,7 +13,7 @@ hero:
       link: /release/setup
     - theme: alt
       text: "Гайды"
-      link: /release/guides/di
+      link: /release/guides/ssr
     # - theme: alt
     #   text: API Examples
     #   link: /examples/

@@ -160,10 +160,10 @@ const someFilter = shallowRef("value");
 
 const posts = Record.new("/api/posts", []);
 
-posts.reloadBy(someFilter);
+posts.reloadBy(someFilter, { componentScope: false });
 ```
 
-```ts [В контексте компоненты] {8}
+```ts [В контексте компоненты] {8,10}
 import { Record } from "nuxoblivius";
 import { shallowRef } from "vue";
 
@@ -171,7 +171,21 @@ const someFilter = shallowRef("value");
 
 const posts = Record.new("/api/posts", []);
 
+posts.reloadBy(someFilter);
+// или
 posts.reloadBy(someFilter, { componentScope: true });
+```
+
+```ts [С возможностью контроля] {8,9}
+import { Record } from "nuxoblivius";
+import { shallowRef } from "vue";
+
+const someFilter = shallowRef("value");
+
+const posts = Record.new("/api/posts", []);
+
+const cancelAutoReload = posts.reloadByControlled(someFilter);
+cancelAutoReload();
 ```
 
 :::
@@ -243,3 +257,42 @@ posts.reset({ pagination: true, response: true, query: true });
 ```
 
 Таким образом, `.reset()` позволяет гибко контролировать и обнулять нужные части состояния **Record**.
+
+## Отмена запроса
+
+Иногда возникает необходимость прервать запрос:
+например, при уходе пользователя со страницы, переключении вкладок, который делает старый запрос неактуальным.
+
+В **Nuxoblivius** для этого предусмотрены методы:
+
+### `.abortRequests(abortCode)`
+
+Отменяет текущие запросы у конкретного **Record**.
+
+В обработчик [`.onFailure()`](/release/record/base.html#хук-onfailure) дополнительно передаётся информация:
+
+> - что ошибка вызвана именно абортом;
+
+> - код аборта (_abortCode_) для идентификации причины.
+
+```ts {5}
+import { Record } from "nuxoblivius";
+
+const posts = Record.new("/api/posts", []);
+
+posts.abortRequests(401);
+```
+
+### `tryAbortAllRequest(abortCode)`
+
+Отменяет все активные запросы у всех **Record** одновременно.
+
+Полезно, если нужно быстро остановить все фоновые операции, например при глобальном _logout_.
+
+```ts {3}
+import { tryAbortAllRequest } from "nuxoblivius";
+
+tryAbortAllRequest(401);
+```
+
+Таким образом, система абортов помогает гибко контролировать запросы и предотвращать гонки данных.
