@@ -53,7 +53,7 @@ export default defineConfig({
 
     nav: [
       { text: 'Документация', link: '/release/setup' },
-      { text: 'Гайды', link: '/release/guides/di' },
+      { text: 'Гайды', link: '/release/guides/ssr' },
     ],
 
     sidebar: [
