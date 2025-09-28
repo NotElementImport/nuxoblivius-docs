@@ -41,6 +41,9 @@ posts.template((rawData: Raw<Posts>) => {
     protocol: rawData?.meta ?? {}, // Сохраняем метаданные
   };
 });
+
+posts.response.items[0].title; // [!code --]
+posts.response[0].title; // [!code ++]
 ```
 
 ## Что такое протокол (`protocol`)?

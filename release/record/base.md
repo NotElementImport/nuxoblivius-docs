@@ -206,9 +206,11 @@ if (posts.loading) {
 В **Nuxoblivius** ошибки можно отлавливать как во _время выполнения запроса_, так и _после него_.
 Для этого предусмотрены два механизма:
 
-> 1. **Хук `.onFailure()`** — позволяет задать обработчик, который сработает при ошибке во _время выполнения запроса_. [Больше информации о хуке `onFailure`](#хук-onfailure)
+> 1. **Хук `.onFailure()`** — позволяет задать обработчик, который сработает при ошибке во _время выполнения запроса_. [Больше информации о хуке `onFailure`](#хук-onfailure-setrequestfailure);
 
-> 2. **Свойство `error`** — указывает этот запрос произошёл с ошибкой, _после выполнения запроса_.
+> 2. **Свойство `error`** — указывает этот запрос произошёл с ошибкой, _после выполнения запроса_;
+
+> 3. **Общий обработчик `SetRequestFailure`** - Аналог метода `.onFailure()` у **Record**. [Больше информации о хуке `SetRequestFailure`](#хук-onfailure-setrequestfailure)
 
 ::: code-group
 
@@ -234,6 +236,18 @@ await posts.get();
 if (posts.error) {
   console.error(posts.response);
 }
+```
+
+```ts [Через глобальный хук] {5-9}
+import { Record, SetRequestFailure } from "nuxoblivius";
+
+const posts = Record.new("/api/posts", []);
+
+SetRequestFailure((info, retry) => {
+  console.error(info.response, "Ошибка");
+  // Если нужно перезапустить запрос:
+  return retry();
+});
 ```
 
 :::
@@ -498,6 +512,16 @@ language.value = "EN";
 
 :::
 
+### Глобальный хук `SetDefaultHeader()`
+
+Так-же есть возможность выставить заголовок для всех **Record**, это полный аналог функции `.header()` у **Record**.
+
+```ts
+import { SetDefaultHeader } from "nuxoblivius";
+
+SetDefaultHeader("Accept", "application/json");
+```
+
 ## Настройка Тела запроса (Request Body)
 
 Для работы с телом запроса в **Nuxoblivius** у объекта **Record** есть метод `.body()`. Он позволяет задавать или изменять тело для запроса.
@@ -576,9 +600,9 @@ posts.onFinish((responseBody, { fromCache, oldResponse }) => {
 });
 ```
 
-### Хук `onFailure`
+### Хук `onFailure` / `SetRequestFailure`
 
-В **Record** предусмотрен хук `.onFailure()`, который вызывается при возникновении _ошибки во время выполнения запроса_.
+В **Record** предусмотрен хук `.onFailure()` / `SetRequestFailure()`, который вызывается при возникновении _ошибки во время выполнения запроса_.
 
 Метод принимает _функцию-обработчик_ с двумя аргументами:
 
@@ -591,7 +615,9 @@ posts.onFinish((responseBody, { fromCache, oldResponse }) => {
 
 > 2. `retry` — функция для повторного запуска запроса.
 
-```ts
+::: code-group
+
+```ts [Record]
 import { Record } from "nuxoblivius";
 
 const posts = Record.new("/api/posts", []);
@@ -606,3 +632,21 @@ posts.onFailure(({ text, code, response }, retry) => {
   }
 });
 ```
+
+```ts [Глобальный хук]
+import { Record, SetRequestFailure } from "nuxoblivius";
+
+const posts = Record.new("/api/posts", []);
+
+SetRequestFailure(({ text, code, response }, retry) => {
+  console.error("Ошибка:", text, "Код:", code);
+  console.log("Ответ:", response);
+
+  // Пример повторного запроса
+  if (code === 500) {
+    return retry();
+  }
+});
+```
+
+:::
