@@ -1,8 +1,8 @@
 import { defineConfig } from 'vitepress'
-import { h } from 'vue'
+import { withMermaid } from "vitepress-plugin-mermaid";
 
 // https://vitepress.dev/reference/site-config
-export default defineConfig({
+export default withMermaid({
   base: '/nuxoblivius-docs/',
   ignoreDeadLinks: true,
   title: "Nuxoblivius",
@@ -67,7 +67,7 @@ export default defineConfig({
           },
           { text: 'State Manager', link: '/release/state-manager' },
           {
-            text: 'Record (Запросы API)', link: '/release/record', items: [
+            text: 'Record (Запросы API)', items: [
               { text: 'Базовые настройки', link: `/release/record/base` },
               { text: 'Продвинутые настройки', link: `/release/record/advanced` },
               { text: 'Модуль: Трансформация', link: `/release/record/template` },
