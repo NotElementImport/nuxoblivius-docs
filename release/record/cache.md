@@ -1,122 +1,119 @@
 # Record (Запросы API) / Кэширование <Badge text="^ 1.1.0" style='margin-top: 13px;'/>
 
-::: tip В разработке
+_Особенности_: <Badge type="tip" text="Не поддерживает SSR" />
 
-Данный раздел всё ещё дорабатывается
+В **Nuxoblivius** предусмотрен встроенный механизм _кэширования запросов_.
+Он особенно полезен для **SPA**-приложений, где данные редко обновляются и нет смысла повторно обращаться к _серверу_ при каждом рендере.
+
+---
+
+**Основные особенности работы**:
+
+1. Кэширование доступно только для **GET**-запросов.
+2. В кэш попадают только успешные ответы (_код **2xx**_).
+3. Повторные запросы с теми же параметрами могут брать данные из кэша, не обращаясь к **API**.
+
+::: tip Почему это может пригодиться?
+Такой подход снижает нагрузку на _сервер_ и ускоряет работу приложения, особенно при навигации между страницами или _повторных открытиях компонентов_.
+:::
+
+## Быстрая настройка кэширования: <Badge type="tip" text="^1.7.19" />
+
+Для простого и автоматического кэширования в **Nuxoblivius** используется метод `.withAutoCache()`.
+Он создаёт ключ кэша на основе _URL_, а также всех _path_ и _query_ параметров.
+
+> Если запрос с теми же параметрами уже выполнялся ранее и был успешен —
+> **Record** вернёт сохранённые данные вместо повторного запроса к **API**.
+
+```ts {7}
+import { Record } from "nuxoblivius";
+
+const posts = Record.new("/api/posts", [])
+  .query({
+    page: 1,
+  })
+  .withAutoCache(); // Автоматическое кэширование
+
+await posts.get(); // Первый запрос — обращение к серверу
+await posts.get(); // Второй — данные возвращаются из кэша
+```
+
+::: tip Где можно использовать?
+
+⚡ Метод особенно удобен для часто повторяющихся запросов — списков, фильтров, подгрузок, и других данных, которые редко меняются.
 
 :::
 
-Для одного `Record`-а может быть вызвана функция получения данных ([GET](/release/records.html#get), [POST](/release/records.html#post), [функции пагинации](/release/records.html#пагинация), и т.д.) многократно (причём с различными [path-параметрами](/release/records.html#path-параметры), в том числе может и без параметров).
+## Низкоуровневая настройка кэширования
 
-[Response](/release/records.html#response) (если не активна функция [appendsResponse](/release/records.html#appendsresponse)) хранит в себе (что логично) лишь последнее полученное значение с API.
+Изначально **Nuxoblivius** строился вокруг концепции _тегов кэширования_ и ручного управления сохранёнными данными.
+Такой подход нужен, когда требуется тонкий контроль над тем, что именно и в каком объёме кэшируется.
 
-При этом предыдущие значения не стираются с памяти, а сохраняются в `кэше`. Кэш хранит в себе данные в виде пар "тег: response" - т.е. к каждому respons-у сооветствует `тег` в качестве идентификатора.
+### Система тегов
 
-При необходимости сборки кэша теги нужно настроить функцией `createTag`:
+Система тегов описывает стратегию кэширования для конкретных параметров запроса.
 
-## createTag
+> **Доступны два режима**:
+>
+> - `simply` — сохраняет только последние данные.
+> - `full` — сохраняет всю историю изменений.
 
-```ts {2,7,11}
-const article = Record.new<IArticle>("/api/article/{id}").createTag(
-  "path:id",
-  "full",
-); // Определение тегов для данного Record
-// Теги по path-параметру. Т.е. id (часть после двоеточия 1-го аргумента) будет браться из path-параметра (часть перед двоеточием).
-// `full` - означает, что запись в кэше будет сохраняться для каждого уникального значения тега 'path:id'
-// Или:
-const article = Record.new<IArticle>("/api/article/{id}").createTag(
-  "path:id",
-  "simply",
-); // Определение тегов для данного Record
-// `simply` - означает, что записи для кэша будут сохраняться по принципу "был указан параметр, или нет". Т.е. будут сохранены 2 записи.
-// Или:
-const articles = Record.new<IArticle>("/api/article").createTag(
-  "query:page",
-  "full",
-); // Определение тегов для данного Record
-// Теги по query-параметру 'page'.
-// `full` - будут идентифицироваться все записи для каждого конкретного 'query:page'
+Создание тега выполняется через метод `.createTag()`.
+
+> **Он принимает два аргумента**:
+>
+> 1. **Что кэшировать**:
+>
+> - `path:<name>` — path-параметр запроса.
+> - `query:<name>` — query-параметр запроса.
+>
+> 2. **Как кэшировать**:
+>
+> - `simply` или `full`.
+
+```ts {5-6}
+import { Record } from "nuxoblivius";
+
+const posts = Record.new("/api/posts", []);
+
+posts.createTag("query:page", "simply");
+posts.createTag("path:id", "full");
 ```
 
-1-й аргумент функции - строка вида `path:${somePathParam}` либо `query:${someQueryParam}`. Часть перед двоеточием определяет, записи будут кэшироваться по path-параметру, или же по query-параметру (2 варианта). Часть после двоеточия - название самого параметра.
+### Получение кэшированных данных
 
-2-й аргумент функции:
+В низкоуровневом режиме система _не подставляет кэш автоматически_.
+Чтобы получить сохранённые данные, используется взаимствование ([borrowFrom](/release/record/borrow.html)) в связке с методом `.cached()`.
 
-- `simply` (default) - при нём в кэше будут сохранены только 2 возможные записи по принципу: был ли указан данный параметр, или же нет.
-- `full` - записи будут кэшироваться для каждого уникального значения указанного в 1-м аргументе параметра.
+Метод `.cached()` принимает объект с условиями получения данных:
 
-Для доступа непосредственно к данным из кэша используется функция `cached`:
+> - `*` — если данные существуют (!== null).
+> - `null` — если данные отсутствуют (=== null).
+> - `Любое значение` — если данные равны этому значению (== <значение>).
 
-## cached
+::: code-group
 
-```ts
-Articles.article.cached({ id: 5 }); // запись с тегом `id: 5` (id как из path-параметра, так и из query будут равнозначны)
+```ts [Получить данные] {7}
+import { Record } from "nuxoblivius";
 
-Articles.article.cached({ id: null }); // запись при неуказанном id
+const posts = Record.new("/api/posts", []);
 
-Articles.article.cached({ id: "*" }); // последняя запись при каком-либо выставленном id, не равном null
+posts.createTag("path:id", "full");
+
+const data = posts.cached({ id: 1 });
 ```
 
-Тут отметим, что при повторной записи данных в Record для одинакового тега, доступен будет только последний из них. Кэш сохраняет только последнюю запись для конкретного тега.
+```ts [Связка с 'borrowFrom'] {9}
+import { Record } from "nuxoblivius";
 
-Для 3-го примера выше, к примеру, в кэше будет доступен только последний из всех response-ов для произвольных id.
+const posts = Record.new("/api/posts", []);
 
-## Примеры использования
-
-```ts
-class Articles {
-  articles = Record.new<IArticle>("/api/article").createTag(
-    "query:page",
-    "full",
-  ); // теги - query-параметры 'page'
-  // 'full' - сохраняем response каждой страницы (query:page)
-}
-
-await Articles.articles.query({ page: 1 }).get();
-
-await Articles.articles.query({ page: 2 }).get();
-
-await Articles.articles.query({ page: 3 }).get();
-
-console.log(Articles.articles.cached({ page: 1 })); // доступна 1-я страница статей
-console.log(Articles.articles.cached({ page: 2 })); // доступна 2-я страница статей
-console.log(Articles.articles.cached({ page: 3 })); // 3-я (актуальная) страница статей
-console.log(Articles.articles.response); // лог, аналогичный предыдущему
-console.log(Articles.articles.cached({ page: "*" })); // лог, также аналогичный двум предыдущим - последний response статей при любом указанном page
-
-await Articles.articles.get(); // не указали page
-
-console.log(Articles.articles.cached({ page: null })); // response статей при неуказанном page
-console.log(Articles.articles.cached({ page: "*" })); // лог, аналогичный первым 5-и:  response статей при любом page, не равном null
-console.log(Articles.articles.cached({ page: 4 })); // undefined
-
-await Articles.articles.query({ id: 5 }).get(); // снова указали page, но указали другой параметр
-
-console.log(Articles.articles.cached({ page: null })); // результат последнего запроса. Т.к. как раз в нём page не был указан (был указан другой параметр, id)
-console.log(Articles.articles.cached({ page: 5 })); // undefined
+posts.createTag("path:id", "full");
+posts.borrowFrom(
+  () => true,
+  () => [{}]
+  (_, { path }) => posts.cached({ id: path.id })
+);
 ```
 
-```ts
-class Articles {
-  article = Record.new<IArticle>("/api/article/{id}").createTag(
-    "path:id",
-    "simply",
-  ); // теги - path-параметры 'id'
-  // 'simply' - сохраняем только 2 записи в кэше по принципу "Был ли выставлен 'path:slug', или нет"
-}
-
-await Articles.article.pathParam("id", 2).get();
-await Articles.article.pathParam("id", 3).get();
-await Articles.article.pathParam("id", 4).get();
-
-console.log(Articles.articles.cached({ id: 2 }));
-console.log(Articles.articles.cached({ id: 3 }));
-console.log(Articles.articles.cached({ id: 4 }));
-console.log(Articles.articles.cached({ id: 5 }));
-console.log(Articles.articles.cached({ id: "*" })); // все 5 вышеперечисленных лога вернут последний response при указанном любом id
-console.log(Articles.articles.cached({ id: null })); // undefined, т.к. запроса при НЕуказанном id не осуществлялось
-
-await Articles.article.get(); // не указали id
-
-console.log(Articles.articles.cached({ id: null })); // теперь данный лог вернёт результат последнего запроса - при нём id не был указан
-```
+:::

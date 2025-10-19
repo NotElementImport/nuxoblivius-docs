@@ -1,50 +1,44 @@
 # Установка
 
-Вся необходимая информация, что бы установить **Nuxoblivius**
+В этом разделе приведена вся необходимая информация для установки и начала работы с **Nuxoblivius**.
 
-## Минимальные требования для проекта
+**Минимальные требования для проекта**:
 
-- `vue` - `^3.1`
-- `typescript` - `^5.1`
+Перед установкой убедитесь, что ваш проект соответствует минимальным версиям зависимостей:
+
+```json
+{
+  "dependencies": {
+    "vue": "^3.2",
+    "typescript": "^5.2",
+    "nuxt": "^3.7"
+  }
+}
+```
+
+::: tip Рекомендуется
+Использовать актуальные версии зависимостей для обеспечения совместимости и стабильной работы фреймворка.
+:::
 
 ## Установка пакета
 
 Установить **Nuxoblivius** изспользуя комманду
 
-<section style="padding: 1em; padding-bottom: 0.1em; background: var(--vp-c-bg-elv); border-radius: 12px;">
-  <div>
-    <span style="color: var(--vp-c-text-2); display: block; margin-bottom: -8px; font-size: 16px; font-weight: 500; text-transform: uppercase;">
-      npm:
-    </span>
+:::code-group
 
-```shell
+```bash [npm]
 npm i nuxoblivius@latest
 ```
 
-  </div>
-
-  <div>
-    <span style="color: var(--vp-c-text-2); display: block; margin-bottom: -8px; margin-top: 1em; font-size: 16px; font-weight: 500; text-transform: uppercase;">
-      pnpm:
-    </span>
-
-```shell
+```bash [pnpm]
 pnpm i nuxoblivius@latest
 ```
 
-  </div>
-
-  <div>
-    <span style="color: var(--vp-c-text-2); display: block; margin-bottom: -8px; margin-top: 1em; font-size: 16px; font-weight: 500; text-transform: uppercase;">
-      yarn:
-    </span>
-
-```shell
+```bash [yarn]
 yarn add nuxoblivius@latest
 ```
 
-  </div>
-</section>
+:::
 
 ## Рекомендации
 
